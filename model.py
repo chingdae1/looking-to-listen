@@ -98,9 +98,9 @@ class Net(nn.Module):
         self.num_of_face = num_of_face
         input_dim = (8 * 257) + (256 * num_of_face)
         self.BLSTM = nn.LSTM(input_size=input_dim, hidden_size=200, batch_first=True, bidirectional=True)
-        self.fc1 = nn.Linear(in_features=301*400, out_features=301*600)
-        self.fc2 = nn.Linear(in_features=301*600, out_features=301*600)
-        self.fc3 = nn.Linear(in_features=301*600, out_features=2*301*257*num_of_face)
+        # self.fc1 = nn.Linear(in_features=301*400, out_features=301*600)
+        # self.fc2 = nn.Linear(in_features=301*600, out_features=301*600)
+        # self.fc3 = nn.Linear(in_features=301*600, out_features=2*301*257*num_of_face)
 
     def forward(self, face_embedding_list, spectrogram):
         video_stream_output_list = []

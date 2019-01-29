@@ -76,16 +76,6 @@ class Dataset(data.Dataset):
         i = D.imag
         concat = np.stack((r, i), axis=0)
         return concat
-'''
-TODO
-- load_audio() 구현
-    : mixtrue 말고 각자 스펙트로그램
-- 스펙트로그램 shape 바꾸고 그거에 맞춰서 모델사이즈도 바꿔야 됨. (사이즈는 형석님한테 물어봐야됨)
-- 데이터는 새 서버에 다시 받기 : ID 소팅해서 맨처음 루트에서 한 12개 정도로 나눠서 다운받기.
-  그니까 1~ 100000 까지는 1번디렉토리 그다음 10만개는 2번 디렉토리...
-  그렇게하고 그 안에서 디렉토리 구조는 대충 ab/cd/abcdefg.mp4 이런식으로 하고
-  중요한건 소팅해서 한 ID 에 대해서 다 다운받으면 그 놈 full 버전은 다 지우기.
-'''
 
 if __name__ == '__main__':
     from torch.utils.data import DataLoader
