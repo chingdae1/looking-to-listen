@@ -108,6 +108,7 @@ class Net(nn.Module):
         for face_embedding in face_embedding_list:
             print(face_embedding.type())
             video_stream_output = self.video_stream(face_embedding)
+            print(video_stream_output.type())
             video_stream_output_list.append(video_stream_output)
         audio_stream_output = self.audio_stream(spectrogram)
         audio_stream_output = audio_stream_output.view((-1,
@@ -123,7 +124,7 @@ class Net(nn.Module):
         av_fusion = torch.cat([video_stream_cat, audio_stream_output], dim=1)
         av_fusion = av_fusion.view((-1, av_fusion.shape[2], av_fusion.shape[1]))  # (N, 301, 8*257 + 256*num_of_face)
         lstm_output, _ = self.BLSTM(av_fusion)
-        x = lstm_output.view(-1, lstm_output.shape[1] * lstm_output.shape[2])
+        x = lstm_output.view(-1, lstm_output.shape[1], lstm_output.shape[2])
         print('------------')
         print(x.type())
         print(x.shape)
