@@ -93,8 +93,8 @@ class VideoStream(nn.Module):
 class Net(nn.Module):
     def __init__(self, num_of_face, device):
         super().__init__()
-        self.video_stream = VideoStream().to(device)
-        self.audio_stream = AudioStream().to(device)
+        self.video_stream = VideoStream()
+        self.audio_stream = AudioStream()
         self.num_of_face = num_of_face
         self.device = device
         input_dim = (8 * 257) + (256 * num_of_face)
@@ -107,7 +107,7 @@ class Net(nn.Module):
         video_stream_output_list = []
         for face_embedding in face_embedding_list:
             print(face_embedding.type())
-            video_stream_output = self.video_stream(face_embedding)
+            video_stream_output = self.video_stream(face_embedding).to(self.device)
             print(video_stream_output.type())
             video_stream_output_list.append(video_stream_output)
         audio_stream_output = self.audio_stream(spectrogram)
