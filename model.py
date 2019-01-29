@@ -91,11 +91,12 @@ class VideoStream(nn.Module):
 
 
 class Net(nn.Module):
-    def __init__(self, num_of_face):
+    def __init__(self, num_of_face, device):
         super().__init__()
         self.video_stream = VideoStream()
         self.audio_stream = AudioStream()
         self.num_of_face = num_of_face
+        self.device = device
         input_dim = (8 * 257) + (256 * num_of_face)
         self.BLSTM = nn.LSTM(input_size=input_dim, hidden_size=200, batch_first=True, bidirectional=True)
         # self.fc1 = nn.Linear(in_features=400, out_features=600)
@@ -112,7 +113,7 @@ class Net(nn.Module):
         audio_stream_output = audio_stream_output.view((-1,
                                                         audio_stream_output.shape[1] * audio_stream_output.shape[3],
                                                         audio_stream_output.shape[2]))
-        video_stream_cat = torch.cat(video_stream_output_list, dim=1)
+        video_stream_cat = torch.cat(video_stream_output_list, dim=1).to(self.device)
         print(video_stream_cat.type())
         video_stream_cat = video_stream_cat.view((-1, video_stream_cat.shape[1], video_stream_cat.shape[2]))
         print(video_stream_cat.type())
