@@ -93,8 +93,8 @@ class VideoStream(nn.Module):
 class Net(nn.Module):
     def __init__(self, num_of_face, device):
         super().__init__()
-        self.video_stream = VideoStream()
-        self.audio_stream = AudioStream()
+        self.video_stream = VideoStream().to(device)
+        self.audio_stream = AudioStream().to(device)
         self.num_of_face = num_of_face
         self.device = device
         input_dim = (8 * 257) + (256 * num_of_face)
@@ -114,7 +114,7 @@ class Net(nn.Module):
         audio_stream_output = audio_stream_output.view((-1,
                                                         audio_stream_output.shape[1] * audio_stream_output.shape[3],
                                                         audio_stream_output.shape[2]))
-        video_stream_cat = torch.cat(video_stream_output_list, dim=1).to(self.device)
+        video_stream_cat = torch.cat(video_stream_output_list, dim=1)
         print(video_stream_cat.type())
         video_stream_cat = video_stream_cat.view((-1, video_stream_cat.shape[1], video_stream_cat.shape[2]))
         print(video_stream_cat.type())
