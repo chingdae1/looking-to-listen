@@ -11,7 +11,7 @@ class Solver():
         self.config = config
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.train_data = Dataset(data_dir=config.data_dir,
-                                  mode='toy')
+                                  mode='toy ')
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=config.batch_size,
                                        num_workers=config.num_workers,
@@ -37,6 +37,7 @@ class Solver():
         self.vgg_face = self.vgg_face.to(self.device)
 
     def fit(self):
+        print('Start training..')
         for epoch in range(self.config.epoch):
             video_list = []
             audio_list = []
@@ -51,6 +52,7 @@ class Solver():
                     audio_mix = 0
                     for idx in range(self.config.num_of_face):
                         one_face_list = []
+                        print('vgg_face')
                         for video in video_list[idx]:
                             one_face_embedding = self.vgg_face(video)
                             one_face_list.append(one_face_embedding)
@@ -58,6 +60,7 @@ class Solver():
                         face_embedding = face_embedding.view(-1, 1024, 75, 1)
                         face_embedding_list.append(face_embedding)
                         audio_mix += audio_list[idx]
+                    print('net')
                     masks = self.net(face_embedding_list, audio_mix)
                     separated_list = []
                     for mask in masks:
