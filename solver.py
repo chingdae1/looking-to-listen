@@ -44,9 +44,11 @@ class Solver():
             face_embedding_list = []
             for step, (video, audio) in enumerate(self.train_loader):
                 if (step + 1) % self.config.num_of_face != 0:
+                    print('if')
                     video_list.append(video.to(self.device))
                     audio_list.append(audio.to(self.device))
                 else:
+                    print('else')
                     video_list.append(video.to(self.device))
                     audio_list.append(audio.to(self.device))
                     audio_mix = 0
