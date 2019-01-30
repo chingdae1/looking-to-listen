@@ -22,6 +22,8 @@ class Dataset(data.Dataset):
             subdir = 'test'
         elif mode is 'val':
             subdir = 'val'
+        elif mode is 'toy':
+            subdir = 'toy'
         else:
             print('[!] Dataset mode error.')
             sys.exit()
@@ -42,6 +44,7 @@ class Dataset(data.Dataset):
         vc = cv2.VideoCapture(video_path)
         num_of_frame = int(vc.get(cv2.CAP_PROP_FRAME_COUNT))
         if num_of_frame < 75:
+            print('Frame length ')
             return False
 
         target_length = self.length * self.fps

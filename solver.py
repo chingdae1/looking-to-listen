@@ -11,7 +11,7 @@ class Solver():
         self.config = config
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.train_data = Dataset(data_dir=config.data_dir,
-                                  mode='train')
+                                  mode='toy')
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=config.batch_size,
                                        num_workers=config.num_workers,
@@ -64,7 +64,7 @@ class Solver():
                         separated = audio_mix * mask
                         separated_list.append(separated)
                     final_output = torch.stack(separated_list, dim=1)
-                    ground_truth = torch.stack(audio_list, dim=1)  # (B, F, 2, 301, 257)
+                    ground_truth = torch.stack(audio_list, dim=1)  # (N, F, 2, 301, 257)
                     loss = self.MSE(final_output, ground_truth)
                     self.optim.zero_grad()
                     loss.backward()

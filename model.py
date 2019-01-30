@@ -99,43 +99,44 @@ class Net(nn.Module):
         self.device = device
         input_dim = (8 * 257) + (256 * num_of_face)
         self.BLSTM = nn.LSTM(input_size=input_dim, hidden_size=200, batch_first=True, bidirectional=True)
-        # self.fc1 = nn.Linear(in_features=400, out_features=600)
-        # self.fc2 = nn.Linear(in_features=600, out_features=600)
-        # self.fc3 = nn.Linear(in_features=600, out_features=2*257*num_of_face)
+        self.fc1 = nn.Linear(in_features=400, out_features=600)
+        self.fc2 = nn.Linear(in_features=600, out_features=600)
+        self.fc3 = nn.Linear(in_features=600, out_features=2*257*num_of_face)
 
     def forward(self, face_embedding_list, spectrogram):
         video_stream_output_list = []
         for face_embedding in face_embedding_list:
-            print(face_embedding.type())
             video_stream_output = self.video_stream(face_embedding).to(self.device)
-            print(video_stream_output.type())
             video_stream_output_list.append(video_stream_output)
         audio_stream_output = self.audio_stream(spectrogram)
         audio_stream_output = audio_stream_output.view((-1,
                                                         audio_stream_output.shape[1] * audio_stream_output.shape[3],
                                                         audio_stream_output.shape[2]))
         video_stream_cat = torch.cat(video_stream_output_list, dim=1)
-        print(video_stream_cat.type())
         video_stream_cat = video_stream_cat.view((-1, video_stream_cat.shape[1], video_stream_cat.shape[2]))
-        print(video_stream_cat.type())
-        print('------------')
-        print(video_stream_cat.type())
-        print(audio_stream_output.type())
         av_fusion = torch.cat([video_stream_cat, audio_stream_output], dim=1)
         av_fusion = av_fusion.view((-1, av_fusion.shape[2], av_fusion.shape[1]))  # (N, 301, 8*257 + 256*num_of_face)
         lstm_output, _ = self.BLSTM(av_fusion)
-        x = lstm_output.view(-1, lstm_output.shape[1], lstm_output.shape[2])
-        print('------------')
-        print(x.type())
+        x = lstm_output.view(-1, lstm_output.shape[1], lstm_output.shape[2])  # (N, 301, 400)
+        x_out_list = []
+        for i in range(x.shape[1]):
+            x_out = self.fc1(x[:, i, :])
+            x_out = F.relu(x_out)
+            x_out = self.fc2(x_out)
+            x_out = F.relu(x_out)
+            x_out = self.fc3(x_out)
+            x_out = F.relu(x_out)
+            x_out_list.append(x_out)
+        x = torch.stack(x_out_list, dim=1)
         print(x.shape)
-
-        x = F.relu(x)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.fc2(x)
-        x = F.relu(x)
-        x = self.fc3(x)
-        x = F.relu(x)
+        spec_size = 2*257
+        mask_list = []
+        for i in range(self.num_of_face):
+            start = i * spec_size
+            mask = x[:, :, start:start+spec_size]
+            print(mask.shape)
+            mask_list.append(mask)
+        x = torch.stack(mask_list, dim=0)
         x = x.view(self.num_of_face, -1, 2, 301, 257)  # (F, N, 2, 301, 257)
         return x
 
