@@ -119,7 +119,6 @@ class Net(nn.Module):
         lstm_output, _ = self.BLSTM(av_fusion)
         x = lstm_output.view(-1, lstm_output.shape[1], lstm_output.shape[2])  # (N, 301, 400)
         x_out_list = []
-        print(x.shape)
         for i in range(x.shape[1]):
             x_out = self.fc1(x[:, i, :])
             x_out = F.relu(x_out)
@@ -131,13 +130,11 @@ class Net(nn.Module):
         x = torch.stack(x_out_list, dim=1)
         spec_size = 2*257
         mask_list = []
-        print(x.shape)
         for i in range(self.num_of_face):
             start = i * spec_size
             mask = x[:, :, start:start+spec_size]
             mask_list.append(mask)
         x = torch.stack(mask_list, dim=0)
-        print(x.shape)
         x = x.view(self.num_of_face, -1, 2, 301, 257)  # (F, N, 2, 301, 257)
         return x
 

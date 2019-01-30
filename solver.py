@@ -44,17 +44,14 @@ class Solver():
             face_embedding_list = []
             for step, (video, audio) in enumerate(self.train_loader):
                 if (step + 1) % self.config.num_of_face != 0:
-                    print('if')
                     video_list.append(video.to(self.device))
                     audio_list.append(audio.to(self.device))
                 else:
-                    print('else')
                     video_list.append(video.to(self.device))
                     audio_list.append(audio.to(self.device))
                     audio_mix = 0
                     for idx in range(self.config.num_of_face):
                         one_face_list = []
-                        print('vgg_face')
                         for video in video_list[idx]:
                             one_face_embedding = self.vgg_face(video)
                             one_face_list.append(one_face_embedding)
@@ -62,7 +59,6 @@ class Solver():
                         face_embedding = face_embedding.view(-1, 1024, 75, 1)
                         face_embedding_list.append(face_embedding)
                         audio_mix += audio_list[idx]
-                    print('net')
                     masks = self.net(face_embedding_list, audio_mix)
                     separated_list = []
                     for mask in masks:
@@ -77,8 +73,8 @@ class Solver():
 
                     print('Epoch[{}/{}]  Step[{}/{}]  Loss: {:.8f}'.format(
                         epoch + 1, self.config.epoch, step + 1,
-                        self.train_data.__len__() // self.config.batch_size
-                        , loss.item()
+                        self.train_data.__len__() // self.config.batch_size,
+                        loss.item()
                     ))
 
                     video_list = []

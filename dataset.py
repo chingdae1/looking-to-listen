@@ -44,8 +44,8 @@ class Dataset(data.Dataset):
         vc = cv2.VideoCapture(video_path)
         num_of_frame = int(vc.get(cv2.CAP_PROP_FRAME_COUNT))
         if num_of_frame < 75:
-            print('Frame length ')
-            return False
+            print('[!] Frame length is over 75 at:', video_path)
+            sys.exit()
 
         target_length = self.length * self.fps
         frames = torch.FloatTensor(target_length, 3, self.size, self.size)
