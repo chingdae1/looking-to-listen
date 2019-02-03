@@ -144,7 +144,7 @@ class Solver():
         print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
 
     def get_sample(self, step, epoch, audio_mix, separated_list, ground_truth):
-        sample_dir = self.config.val_sample_dir, str(epoch) + ' epoch', 'step ' + str(step)
+        sample_dir = os.path.join(self.config.val_sample_dir, str(epoch) + ' epoch', 'step ' + str(step))
         os.makedirs(os.path.join(sample_dir), exist_ok=True)
 
         for i, separated in enumerate(separated_list):
