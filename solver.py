@@ -160,7 +160,7 @@ class Solver():
                 gt_dir = os.path.join(batch_dir, 'groud truth')
                 output_dir = os.path.join(batch_dir, 'output')
                 gt_path = os.path.join(gt_dir, 'ground_truth_' + str(k))
-                output_path = os.psth.join(output_dir, 'output_' + str(k))
+                output_path = os.path.join(output_dir, 'output_' + str(k))
                 Solver.spect_to_wav(gt[k], gt_path)
                 Solver.spect_to_wav(s, output_path)
                 # what about video..?
