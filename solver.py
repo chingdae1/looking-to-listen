@@ -90,6 +90,9 @@ class Solver():
                     video_list = []
                     audio_list = []
                     face_embedding_list = []
+            if (epoch + 1) % self.config.val_every == 0:
+                self.validation(epoch + 1)
+
 
     def validation(self, epoch):
         print('Start validation..')
