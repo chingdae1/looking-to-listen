@@ -44,7 +44,7 @@ class Dataset(data.Dataset):
         vc = cv2.VideoCapture(video_path)
         num_of_frame = int(vc.get(cv2.CAP_PROP_FRAME_COUNT))
         if num_of_frame < 75:
-            print('[!] Frame length is over 75 at:', video_path)
+            print('[!] Frame length is under 75 at:', video_path)
             sys.exit()
 
         target_length = self.length * self.fps
@@ -52,6 +52,10 @@ class Dataset(data.Dataset):
         offset_boundary = (num_of_frame - margin) - target_length
         if offset_boundary < 0:
             offset_boundary = 0
+
+        # [!][!][!][!] For toy test only [!][!][!][!]
+        offset_boundary = 0
+
         self.frame_offset = random.randint(0, offset_boundary)
 
         for idx in range(self.frame_offset, self.frame_offset + target_length):
