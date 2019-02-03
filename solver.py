@@ -145,6 +145,7 @@ class Solver():
         # FIX it !!!!!!
         # average_loss = np.average(loss_list)
         # print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
+            self.net.train()
 
     def get_sample(self, step, epoch, audio_mix, final_output, ground_truth):
         sample_dir = os.path.join(self.config.val_sample_dir, str(epoch) + '_epoch', 'step_' + str(step))
