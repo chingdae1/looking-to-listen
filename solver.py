@@ -144,11 +144,11 @@ class Solver():
         print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
 
     def get_sample(self, step, epoch, audio_mix, separated_list, ground_truth):
-        sample_dir = os.path.join(self.config.val_sample_dir, str(epoch) + ' epoch', 'step ' + str(step))
+        sample_dir = os.path.join(self.config.val_sample_dir, str(epoch) + '_epoch', 'step_' + str(step))
         os.makedirs(os.path.join(sample_dir), exist_ok=True)
 
         for i, separated in enumerate(separated_list):
-            batch_dir = os.path.join(sample_dir, 'batch ' + str(i))
+            batch_dir = os.path.join(sample_dir, 'batch_' + str(i))
             os.makedirs(batch_dir, exist_ok=True)
             mix = audio_mix[i]  # (2, 301, 257)
             # mix to audio
@@ -157,10 +157,10 @@ class Solver():
 
             gt = ground_truth[i]
             for k, s in enumerate(separated):
-                gt_dir = os.path.join(batch_dir, 'groud truth')
+                gt_dir = os.path.join(batch_dir, 'groud_truth')
                 output_dir = os.path.join(batch_dir, 'output')
-                gt_path = os.path.join(gt_dir, 'ground_truth_' + str(k))
-                output_path = os.path.join(output_dir, 'output_' + str(k))
+                gt_path = os.path.join(gt_dir, 'ground_truth_' + str(k) + '.wav')
+                output_path = os.path.join(output_dir, 'output_' + str(k) + '.wav')
                 Solver.spect_to_wav(gt[k], gt_path)
                 Solver.spect_to_wav(s, output_path)
                 # what about video..?
