@@ -134,7 +134,7 @@ class Solver():
                 ))
 
                 if step < self.config.sample_for:
-                    self.get_sample(epoch, step + 1, audio_mix, separated_list, ground_truth)
+                    self.get_sample(epoch, step + 1, audio_mix, final_output, ground_truth)
 
                 video_list = []
                 audio_list = []
@@ -143,11 +143,11 @@ class Solver():
         average_loss = np.average(loss_list)
         print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
 
-    def get_sample(self, step, epoch, audio_mix, separated_list, ground_truth):
+    def get_sample(self, step, epoch, audio_mix, final_output, ground_truth):
         sample_dir = os.path.join(self.config.val_sample_dir, str(epoch) + '_epoch', 'step_' + str(step))
         os.makedirs(os.path.join(sample_dir), exist_ok=True)
 
-        for i, separated in enumerate(separated_list):
+        for i, separated in enumerate(final_output):
             batch_dir = os.path.join(sample_dir, 'batch_' + str(i))
             os.makedirs(batch_dir, exist_ok=True)
             mix = audio_mix[i]  # (2, 301, 257)
