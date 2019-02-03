@@ -159,6 +159,8 @@ class Solver():
             for k, s in enumerate(separated):
                 gt_dir = os.path.join(batch_dir, 'groud_truth')
                 output_dir = os.path.join(batch_dir, 'output')
+                os.makedirs(gt_dir, exist_ok=True)
+                os.makedirs(output_dir, exist_ok=True)
                 gt_path = os.path.join(gt_dir, 'ground_truth_' + str(k) + '.wav')
                 output_path = os.path.join(output_dir, 'output_' + str(k) + '.wav')
                 Solver.spect_to_wav(gt[k], gt_path)
