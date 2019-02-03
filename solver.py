@@ -164,7 +164,7 @@ class Solver():
                 gt_path = os.path.join(gt_dir, 'ground_truth_' + str(k) + '.wav')
                 output_path = os.path.join(output_dir, 'output_' + str(k) + '.wav')
                 Solver.spect_to_wav(gt[k], gt_path)
-                Solver.spect_to_wav(s, output_path)
+                Solver.spect_to_wav(s.detach().numpy(), output_path)
                 # what about video..?
 
     @staticmethod
