@@ -127,6 +127,8 @@ class Solver():
                 ground_truth = torch.stack(audio_list, dim=1)  # (N, F, 2, 301, 257)
                 loss = self.MSE(final_output, ground_truth)
                 loss_list.append(loss)
+                print(type(loss))
+                print(loss)
                 print(loss.shape)
                 print('Step[{}/{}]  Loss: {:.8f}'.format(
                     step + 1,
