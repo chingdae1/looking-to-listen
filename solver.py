@@ -41,7 +41,8 @@ class Solver():
                                       lr=config['lr'])
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optim,
                                                                     factor=0.5,
-                                                                    patience=3)
+                                                                    patience=3,
+                                                                    verbose=True)
         self.vgg_face = vgg_face_dag(config['vgg_face_path'])
         self.vgg_face.eval()
         for param in self.vgg_face.parameters():
