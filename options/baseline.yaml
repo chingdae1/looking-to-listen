@@ -1,12 +1,12 @@
 model_name: baseline_1
 
 num_of_face: 2
-vgg_face_path: ./asset/vgg_face_dag.pth
+vgg_face_path: ../asset/vgg_face_dag.pth
 
 lr: 0.00003
 epoch: 100
 
-data_dir: ./data/toy
+data_dir: /workspace2/AVS_70000/
 batch_size: 1
 num_workers: 8
 
