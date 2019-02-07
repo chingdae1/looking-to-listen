@@ -160,6 +160,8 @@ class Solver():
             mix_path = os.path.join(batch_dir, 'mix.wav')
             Solver.spect_to_wav(mix, mix_path)
             idx_batch = idx_tensor[i]
+            print(idx_tensor)
+            print(idx_batch)
 
             for k, s in enumerate(separated):
                 gt_dir = os.path.join(batch_dir, 'groud_truth')
