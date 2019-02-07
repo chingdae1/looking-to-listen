@@ -191,7 +191,7 @@ class Solver():
         checkpoint = {
             'net': self.net.state_dict()
         }
-        output_path = os.path.join(self.config.saved_dir, 'model_' + str(epoch) + '.pt')
+        output_path = os.path.join(self.saved_dir, 'model_' + str(epoch) + '.pt')
         torch.save(checkpoint, output_path)
 
     @staticmethod
