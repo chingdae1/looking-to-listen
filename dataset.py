@@ -84,14 +84,6 @@ class Dataset(data.Dataset):
         concat = np.stack((r, i), axis=0)
         return concat
 
-    def get_vid_path_by_idx(self, idx_tensor):
-        idx = idx_tensor.item()
-        return self.all_video[idx]
-
-    def get_aud_path_by_idx(self, idx_tensor):
-        idx = idx_tensor.item()
-        return self.all_audio[idx]
-
     def get_id_by_idx(self, idx_tensor):
         idx = idx_tensor.item()
         data_id = os.path.basename(self.all_video[idx]).replace('.mp4', '')

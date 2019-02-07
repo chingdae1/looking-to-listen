@@ -5,9 +5,9 @@ from dataset import Dataset
 import os
 import librosa
 import numpy as np
+import cv2
 from torch.utils.data import DataLoader
 from submodule import vgg_face_dag
-from shutil import copyfile
 
 
 class Solver():
@@ -138,19 +138,21 @@ class Solver():
 
                 if step < self.config.sample_for:
                     idx_tensor = torch.stack(idx_list, dim=1)
-                    self.get_sample(epoch, step + 1, audio_mix, final_output, idx_tensor)
+                    vid_tensor = torch.stack(video_list, dim=1)  # (N, F, 75, 3, 224, 224)
+                    self.get_sample(epoch, step + 1, audio_mix, final_output, ground_truth, vid_tensor, idx_tensor)
 
                 video_list = []
                 audio_list = []
                 face_embedding_list = []
                 idx_list = []
+
         # FIX it !!!!!!
         # average_loss = np.average(loss_list)
         # print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
             self.net.train()
 
-    def get_sample(self, step, epoch, audio_mix, final_output, idx_tensor):
-        sample_dir = os.path.join(self.config.val_sample_dir, str(epoch) + '_epoch', 'step_' + str(step))
+    def get_sample(self, step, epoch, audio_mix, final_output, ground_truth, video, idx_tensor):
+        sample_dir = os.path.join(self.config.val_sample_dir, 'epoch_' + str(epoch), 'step_' + str(step))
         os.makedirs(os.path.join(sample_dir), exist_ok=True)
 
         for i, separated in enumerate(final_output):
@@ -159,6 +161,8 @@ class Solver():
             mix = audio_mix[i]  # (2, 301, 257)
             mix_path = os.path.join(batch_dir, 'mix.wav')
             Solver.spect_to_wav(mix, mix_path)
+            gt = ground_truth[i]
+            vid_tensor = video[i]
             idx_batch = idx_tensor[i]
 
             for k, s in enumerate(separated):
@@ -171,16 +175,13 @@ class Solver():
 
                 idx = idx_batch[k]
                 data_id = self.val_data.get_id_by_idx(idx)
-                gt_np_path = self.val_data.get_aud_path_by_idx(idx)
-                gt_sample_path = os.path.join(gt_dir, data_id + '.wav')
+                gt_path = os.path.join(gt_dir, data_id + '.wav')
                 output_path = os.path.join(output_dir, data_id + '.wav')
-                video_path = self.val_data.get_vid_path_by_idx(idx)
-                video_sample_path = os.path.join(video_dir, data_id + '.mp4')
+                video_path = os.path.join(video_dir, data_id + '.mp4')
 
-                gt = np.load(gt_np_path)
-                librosa.output.write_wav(gt_sample_path, gt, sr=16000)
+                Solver.spect_to_wav(gt[k], gt_path)
                 Solver.spect_to_wav(s.detach().cpu().numpy(), output_path)
-                copyfile(video_path, video_sample_path)
+                Solver.tensor_to_vid(vid_tensor[k], video_path)
 
     @staticmethod
     def spect_to_wav(spect, output_path, sr=16000, hop_length=160, win_length=400):
@@ -190,3 +191,12 @@ class Solver():
         complex = np.transpose(complex, (1, 0))
         y_hat = librosa.istft(complex, hop_length=hop_length, win_length=win_length, length=48000)
         librosa.output.write_wav(output_path, y_hat, sr=sr)
+
+    @staticmethod
+    def tensor_to_vid(vid_tensor, output_path, fps=25.0, fourcc='mp4v', size=(224, 224)):
+        fourcc = cv2.VideoWriter_fourcc(fourcc)
+        vid_writer = cv2.VideoWriter(output_path, fourcc, fps, (224, 224))
+
+        for frame in vid_tensor:
+            frame = frame.permute(1, 2, 0)
+            vid_writer.write(frame)
