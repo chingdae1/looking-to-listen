@@ -35,7 +35,7 @@ class Solver():
                                      num_workers=config['num_workers'],
                                      shuffle=True,
                                      drop_last=True)
-        self.net = model.Net(config.num_of_face, self.device).to(self.device)
+        self.net = model.Net(config['num_of_face'], self.device).to(self.device)
         self.MSE = torch.nn.MSELoss()
         self.optim = torch.optim.Adam(self.net.parameters(),
                                       lr=config['lr'])

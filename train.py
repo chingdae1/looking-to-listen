@@ -26,7 +26,7 @@ def main():
 
     args = parser.parse_args()
 
-    with open(args.config_path, 'r') as config:
+    with open(args.config_path, 'r') as config
         config = yaml.load(config.read())
     solver = Solver(config)
     solver.fit()
