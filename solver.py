@@ -14,56 +14,56 @@ class Solver():
     def __init__(self, config):
         self.config = config
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.train_data = Dataset(data_dir=config.data_dir,
+        self.train_data = Dataset(data_dir=config['data_dir'],
                                   mode='toy')
         self.train_loader = DataLoader(self.train_data,
-                                       batch_size=config.batch_size,
-                                       num_workers=config.num_workers,
+                                       batch_size=config['batch_size'],
+                                       num_workers=config['num_workers'],
                                        shuffle=True,
                                        drop_last=True)
-        self.test_data = Dataset(data_dir=config.data_dir,
+        self.test_data = Dataset(data_dir=config['data_dir'],
                                  mode='test')
         self.test_loader = DataLoader(self.test_data,
-                                      batch_size=config.batch_size,
-                                      num_workers=config.num_workers,
+                                      batch_size=config['batch_size'],
+                                      num_workers=config['num_workers'],
                                       shuffle=True,
                                       drop_last=True)
-        self.val_data = Dataset(data_dir=config.data_dir,
+        self.val_data = Dataset(data_dir=config['data_dir'],
                                 mode='toy')
         self.val_loader = DataLoader(self.val_data,
-                                     batch_size=config.batch_size,
-                                     num_workers=config.num_workers,
+                                     batch_size=config['batch_size'],
+                                     num_workers=config['num_workers'],
                                      shuffle=True,
                                      drop_last=True)
         self.net = model.Net(config.num_of_face, self.device).to(self.device)
         self.MSE = torch.nn.MSELoss()
         self.optim = torch.optim.Adam(self.net.parameters(),
-                                      lr=config.lr)
-        self.vgg_face = vgg_face_dag(config.vgg_face_path)
+                                      lr=config['lr'])
+        self.vgg_face = vgg_face_dag(config['vgg_face_path'])
         self.vgg_face.eval()
         for param in self.vgg_face.parameters():
             param.requires_grad = False
         num_ftrs = self.vgg_face.fc8.in_features
         self.vgg_face.fc8 = nn.Linear(num_ftrs, 1024)
         self.vgg_face = self.vgg_face.to(self.device)
-        self.saved_dir = os.path.join(config.save_dir, config.model_name)
+        self.saved_dir = os.path.join(config['save_dir'], config['model_name'])
         os.makedirs(self.saved_dir, exist_ok=True)
 
     def fit(self):
         print('Start training..')
-        for epoch in range(self.config.epoch):
+        for epoch in range(self.config['epoch']):
             video_list = []
             audio_list = []
             face_embedding_list = []
             for step, (video, audio, _) in enumerate(self.train_loader):
-                if (step + 1) % self.config.num_of_face != 0:
+                if (step + 1) % self.config['num_of_face'] != 0:
                     video_list.append(video.to(self.device))
                     audio_list.append(audio.to(self.device))
                 else:
                     video_list.append(video.to(self.device))
                     audio_list.append(audio.to(self.device))
                     audio_mix = 0
-                    for idx in range(self.config.num_of_face):
+                    for idx in range(self.config['num_of_face']):
                         one_face_list = []
                         for video in video_list[idx]:
                             one_face_embedding = self.vgg_face(video)
@@ -85,15 +85,15 @@ class Solver():
                     self.optim.step()
 
                     print('Epoch[{}/{}]  Step[{}/{}]  Loss: {:.8f}'.format(
-                        epoch + 1, self.config.epoch, step + 1,
-                        self.train_data.__len__() // self.config.batch_size,
+                        epoch + 1, self.config['epoch'], step + 1,
+                        self.train_data.__len__() // self.config['batch_size'],
                         loss.item()
                     ))
 
                     video_list = []
                     audio_list = []
                     face_embedding_list = []
-            if (epoch + 1) % self.config.val_every == 0:
+            if (epoch + 1) % self.config['val_every'] == 0:
                 self.validation(epoch + 1)
 
             self.save(epoch)
@@ -107,7 +107,7 @@ class Solver():
         idx_list = []
         loss_list = []
         for step, (video, audio, idx) in enumerate(self.val_loader):
-            if (step + 1) % self.config.num_of_face != 0:
+            if (step + 1) % self.config['num_of_face'] != 0:
                 video_list.append(video.to(self.device))
                 audio_list.append(audio.to(self.device))
                 idx_list.append(idx)
@@ -116,7 +116,7 @@ class Solver():
                 audio_list.append(audio.to(self.device))
                 idx_list.append(idx)
                 audio_mix = 0
-                for idx in range(self.config.num_of_face):
+                for idx in range(self.config['num_of_face']):
                     one_face_list = []
                     for video in video_list[idx]:
                         one_face_embedding = self.vgg_face(video)
@@ -136,14 +136,14 @@ class Solver():
                 loss_list.append(loss)
                 print('Step[{}/{}]  Loss: {:.8f}'.format(
                     step + 1,
-                    self.val_data.__len__() // self.config.batch_size,
+                    self.val_data.__len__() // self.config['batch_size'],
                     loss.item()
                 ))
 
-                if step < self.config.sample_for:
+                if step < self.config['sample_for']:
                     idx_tensor = torch.stack(idx_list, dim=1)
                     vid_tensor = torch.stack(video_list, dim=1)  # (N, F, 75, 3, 224, 224)
-                    self.get_sample(epoch, step + 1, audio_mix, final_output, ground_truth, vid_tensor, idx_tensor)
+                    self.get_sample(step + 1, epoch, audio_mix, final_output, ground_truth, vid_tensor, idx_tensor)
 
                 video_list = []
                 audio_list = []
@@ -156,7 +156,7 @@ class Solver():
             self.net.train()
 
     def get_sample(self, step, epoch, audio_mix, final_output, ground_truth, video, idx_tensor):
-        sample_dir = os.path.join(self.config.val_sample_dir, 'epoch_' + str(epoch), 'step_' + str(step))
+        sample_dir = os.path.join(self.config['val_sample_dir'], 'epoch_' + str(epoch), 'step_' + str(step))
         os.makedirs(os.path.join(sample_dir), exist_ok=True)
 
         for i, separated in enumerate(final_output):

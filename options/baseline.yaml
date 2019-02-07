@@ -1,0 +1,16 @@
+model_name: baseline_1
+
+num_of_face: 2
+vgg_face_path: ./asset/vgg_face_dag.pth
+
+lr: 0.00003
+epoch: 100
+
+data_dir: ./data/toy
+batch_size: 1
+num_workers: 8
+
+val_every: 1
+sample_for: 10
+val_sample_dir: ./val_sample
+save_dir: ./saved
