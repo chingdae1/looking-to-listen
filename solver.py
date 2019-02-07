@@ -198,5 +198,5 @@ class Solver():
         vid_writer = cv2.VideoWriter(output_path, fourcc, fps, (224, 224))
 
         for frame in vid_tensor:
-            frame = frame.permute(1, 2, 0)
+            frame = frame.permute(1, 2, 0).numpy()
             vid_writer.write(frame)
