@@ -175,7 +175,7 @@ class Solver():
                 gt_sample_path = os.path.join(gt_dir, data_id + '.wav')
                 output_path = os.path.join(output_dir, data_id + '.wav')
                 video_path = self.val_data.get_vid_path_by_idx(idx)
-                video_sample_path = os.path.join(video_dir, data_id + '.wav')
+                video_sample_path = os.path.join(video_dir, data_id + '.mp4')
 
                 copyfile(gt_path, gt_sample_path)
                 Solver.spect_to_wav(s.detach().cpu().numpy(), output_path)
