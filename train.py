@@ -15,9 +15,11 @@ def main():
     parser.add_argument('--batch_size', type=int, default=1)
     parser.add_argument('--num_workers', type=int, default=4)
 
+    parser.add_argument('--model_name', type=str, default='first_trial')
     parser.add_argument('--val_every', type=int, default=1)
     parser.add_argument('--sample_for', type=int, default=10)
     parser.add_argument('--val_sample_dir', type=str, default='./val_sample')
+    parser.add_argument('--save_dir', type=str, default='./saved')
 
     config = parser.parse_args()
     solver = Solver(config)

@@ -46,6 +46,8 @@ class Solver():
         num_ftrs = self.vgg_face.fc8.in_features
         self.vgg_face.fc8 = nn.Linear(num_ftrs, 1024)
         self.vgg_face = self.vgg_face.to(self.device)
+        self.saved_dir = os.path.join(config.save_dir, config.model_name)
+        os.makedirs(self.saved_dir, exist_ok=True)
 
     def fit(self):
         print('Start training..')
@@ -93,6 +95,8 @@ class Solver():
                     face_embedding_list = []
             if (epoch + 1) % self.config.val_every == 0:
                 self.validation(epoch + 1)
+
+            self.save(epoch)
 
     def validation(self, epoch):
         print('Start validation..')
@@ -183,6 +187,13 @@ class Solver():
                 Solver.spect_to_wav(s.detach().cpu().numpy(), output_path)
                 Solver.tensor_to_vid(vid_tensor[k], video_path)
 
+    def save(self, epoch):
+        checkpoint = {
+            'net': self.net.state_dict()
+        }
+        output_path = os.path.join(self.config.saved_dir, 'model_' + str(epoch) + '.pt')
+        torch.save(checkpoint, output_path)
+
     @staticmethod
     def spect_to_wav(spect, output_path, sr=16000, hop_length=160, win_length=400):
         complex = np.ndarray((spect.shape[1], spect.shape[2]), dtype=np.complex)
@@ -201,6 +212,4 @@ class Solver():
             frame = frame.permute(1, 2, 0).cpu().numpy()
             frame *= 255
             frame = frame.astype(np.uint8)
-            print(frame.shape)
-            print(frame)
             vid_writer.write(frame)
