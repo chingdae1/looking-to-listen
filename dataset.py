@@ -35,7 +35,7 @@ class Dataset(data.Dataset):
         audio_path = self.all_audio[index]
         video = self.load_video(video_path)
         audio = self.load_audio(audio_path)
-        return video, audio
+        return video, audio, index
 
     def __len__(self):
         return len(self.all_video)
@@ -84,13 +84,27 @@ class Dataset(data.Dataset):
         concat = np.stack((r, i), axis=0)
         return concat
 
+    def get_vid_path_by_idx(self, idx_tensor):
+        idx = idx_tensor.item()
+        return self.all_video[idx]
+
+    def get_aud_path_by_idx(self, idx_tensor):
+        idx = idx_tensor.item()
+        return self.all_audio[idx]
+
+    def get_id_by_idx(self, idx_tensor):
+        idx = idx_tensor.item()
+        data_id = os.path.basename(self.all_video[idx])
+        return data_id
+
 if __name__ == '__main__':
     from torch.utils.data import DataLoader
-    dataset = Dataset('./data_toy', mode='train')
+    dataset = Dataset('./data_toy', mode='toy')
     loader = DataLoader(dataset, batch_size=2, shuffle=True, drop_last=True)
 
-    for step, (video, audio) in enumerate(loader):
+    for step, (video, audio, index) in enumerate(loader):
         print('---')
         print(video.shape)  # (B, 75, 3, 224, 224)
         print(audio.shape)  # (B, 2, 301, 257)
+        print(index)  # (B)
         break
