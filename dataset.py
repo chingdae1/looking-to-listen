@@ -54,7 +54,7 @@ class Dataset(data.Dataset):
             offset_boundary = 0
 
         # [!][!][!][!] For toy test only [!][!][!][!]
-        offset_boundary = 0
+        # offset_boundary = 0
 
         self.frame_offset = random.randint(0, offset_boundary)
 
