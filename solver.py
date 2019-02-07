@@ -137,7 +137,7 @@ class Solver():
                 ))
 
                 if step < self.config.sample_for:
-                    idx_tensor = torch.stack(idx_list, dim=0)
+                    idx_tensor = torch.stack(idx_list, dim=1)
                     self.get_sample(epoch, step + 1, audio_mix, final_output, idx_tensor)
 
                 video_list = []
@@ -160,8 +160,6 @@ class Solver():
             mix_path = os.path.join(batch_dir, 'mix.wav')
             Solver.spect_to_wav(mix, mix_path)
             idx_batch = idx_tensor[i]
-            print(idx_tensor.shape)
-            print(idx_batch.shape)
 
             for k, s in enumerate(separated):
                 gt_dir = os.path.join(batch_dir, 'groud_truth')
