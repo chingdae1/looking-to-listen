@@ -3,8 +3,8 @@ model_name: toy_test
 num_of_face: 2
 vgg_face_path: ../asset/vgg_face_dag.pth
 
-lr: 0.00003
-epoch: 100
+lr: 0.00006
+epoch: 5000
 
 data_dir: /workspace2/AVS_70000/
 batch_size: 1
