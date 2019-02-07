@@ -194,7 +194,7 @@ class Solver():
 
     @staticmethod
     def tensor_to_vid(vid_tensor, output_path, fps=25.0, fourcc='mp4v', size=(224, 224)):
-        fourcc = cv2.VideoWriter_fourcc(fourcc)
+        fourcc = cv2.VideoWriter_fourcc(*fourcc)
         vid_writer = cv2.VideoWriter(output_path, fourcc, fps, (224, 224))
 
         for frame in vid_tensor:
