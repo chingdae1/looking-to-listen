@@ -200,7 +200,7 @@ class Solver():
         for frame in vid_tensor:
             frame = frame.permute(1, 2, 0).cpu().numpy()
             frame *= 255
-            frame = frame.astype('int')
+            frame = frame.astype(np.uint8)
             print(frame.shape)
             print(frame)
             vid_writer.write(frame)
