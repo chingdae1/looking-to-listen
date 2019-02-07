@@ -94,7 +94,7 @@ class Dataset(data.Dataset):
 
     def get_id_by_idx(self, idx_tensor):
         idx = idx_tensor.item()
-        data_id = os.path.basename(self.all_video[idx])
+        data_id = os.path.basename(self.all_video[idx]).replace('.mp4', '')
         return data_id
 
 if __name__ == '__main__':
