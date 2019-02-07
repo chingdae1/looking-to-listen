@@ -156,7 +156,6 @@ class Solver():
                 idx_list = []
                 cnt += 1
 
-        # FIX it !!!!!!
         average_loss = total_loss / cnt
         print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
         self.net.train()
