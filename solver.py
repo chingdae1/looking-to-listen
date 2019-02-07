@@ -199,4 +199,5 @@ class Solver():
 
         for frame in vid_tensor:
             frame = frame.permute(1, 2, 0).cpu().numpy()
+            print(frame.shape)
             vid_writer.write(frame)
