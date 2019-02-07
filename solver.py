@@ -201,4 +201,6 @@ class Solver():
             frame = frame.permute(1, 2, 0).cpu().numpy()
             frame *= 255
             frame = frame.astype('int')
+            print(frame.shape)
+            print(frame)
             vid_writer.write(frame)
