@@ -39,6 +39,9 @@ class Solver():
         self.MSE = torch.nn.MSELoss()
         self.optim = torch.optim.Adam(self.net.parameters(),
                                       lr=config['lr'])
+        self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optim,
+                                                                    factor=0.5,
+                                                                    patience=3)
         self.vgg_face = vgg_face_dag(config['vgg_face_path'])
         self.vgg_face.eval()
         for param in self.vgg_face.parameters():
@@ -94,8 +97,8 @@ class Solver():
                     audio_list = []
                     face_embedding_list = []
             if (epoch + 1) % self.config['val_every'] == 0:
-                self.validation(epoch + 1)
-
+                val_loss = self.validation(epoch + 1)
+                self.scheduler.step(val_loss)
             self.save(epoch)
 
     def validation(self, epoch):
@@ -105,7 +108,8 @@ class Solver():
         audio_list = []
         face_embedding_list = []
         idx_list = []
-        loss_list = []
+        total_loss = 0
+        cnt = 0
         for step, (video, audio, idx) in enumerate(self.val_loader):
             if (step + 1) % self.config['num_of_face'] != 0:
                 video_list.append(video.to(self.device))
@@ -133,7 +137,7 @@ class Solver():
                 final_output = torch.stack(separated_list, dim=1)
                 ground_truth = torch.stack(audio_list, dim=1)  # (N, F, 2, 301, 257)
                 loss = self.MSE(final_output, ground_truth)
-                loss_list.append(loss)
+                total_loss += loss
                 print('Step[{}/{}]  Loss: {:.8f}'.format(
                     step + 1,
                     self.val_data.__len__() // self.config['batch_size'],
@@ -149,11 +153,13 @@ class Solver():
                 audio_list = []
                 face_embedding_list = []
                 idx_list = []
+                cnt += 1
 
         # FIX it !!!!!!
-        # average_loss = np.average(loss_list)
-        # print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
-            self.net.train()
+        average_loss = total_loss / cnt
+        print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
+        self.net.train()
+        return average_loss
 
     def get_sample(self, step, epoch, audio_mix, final_output, ground_truth, video, idx_tensor):
         sample_dir = os.path.join(self.config['val_sample_dir'], 'epoch_' + str(epoch), 'step_' + str(step))
