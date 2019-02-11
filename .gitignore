@@ -4,3 +4,5 @@
 __pycache__/
 asset/
 data_toy/
+saved/
+val_sample/
