@@ -161,7 +161,7 @@ class Solver():
         return average_loss
 
     def get_sample(self, step, epoch, audio_mix, final_output, ground_truth, video, idx_tensor):
-        sample_dir = os.path.join(self.config['val_sample_dir'], 'epoch_' + str(epoch), 'step_' + str(step))
+        sample_dir = os.path.join(self.config['val_sample_dir'], self.config['model_name'], 'epoch_' + str(epoch), 'step_' + str(step))
         os.makedirs(os.path.join(sample_dir), exist_ok=True)
 
         for i, separated in enumerate(final_output):
