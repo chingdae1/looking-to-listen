@@ -30,6 +30,13 @@ class Dataset(data.Dataset):
         self.all_video = sorted(glob.glob(os.path.join(data_dir, subdir, 'original', 'cropped', '*.mp4')))
         self.all_audio = sorted(glob.glob(os.path.join(data_dir, subdir, 'numpy', 'audio', '*.npy')))
 
+        print(len(self.all_video), 'video has been found.')
+        print(len(self.all_audio), 'audio has been found.')
+
+        if len(self.all_video) != len(self.all_audio):
+            print('[!] The number of video/audio is not same.')
+            sys.exit()
+
     def __getitem__(self, index):
         video_path = self.all_video[index]
         audio_path = self.all_audio[index]
