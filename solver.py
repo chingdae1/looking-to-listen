@@ -73,7 +73,7 @@ class Solver():
                         face_embedding = face_embedding.view(-1, 1024, 75, 1)
                         face_embedding_list.append(face_embedding)
                         audio_mix += audio_list[idx]
-                    audio_mix = Dataset.power_law_compression(audio_mix)
+                    # audio_mix = Dataset.power_law_compression(audio_mix)
                     masks = self.net(face_embedding_list, audio_mix)
                     separated_list = []
                     for mask in masks:
@@ -81,7 +81,7 @@ class Solver():
                         separated_list.append(separated)
                     final_output = torch.stack(separated_list, dim=1)
                     ground_truth = torch.stack(audio_list, dim=1)  # (N, F, 2, 301, 257)
-                    ground_truth = Dataset.power_law_compression(ground_truth)
+                    # ground_truth = Dataset.power_law_compression(ground_truth)
                     loss = self.MSE(final_output, ground_truth)
                     self.optim.zero_grad()
                     loss.backward()
@@ -188,8 +188,8 @@ class Solver():
                 output_path = os.path.join(output_dir, data_id + '.wav')
                 video_path = os.path.join(video_dir, data_id + '.mp4')
 
-                gt[k] = Dataset.decompression(gt[k])
-                s = Dataset.decompression(s.detach().cpu().numpy())
+                # gt[k] = Dataset.decompression(gt[k])
+                # s = Dataset.decompression(s.detach().cpu().numpy())
                 Dataset.spect_to_wav(gt[k], gt_path)
                 Dataset.spect_to_wav(s, output_path)
                 Dataset.tensor_to_vid(vid_tensor[k], video_path)
