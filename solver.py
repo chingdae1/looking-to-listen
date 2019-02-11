@@ -191,7 +191,7 @@ class Solver():
                 # gt[k] = Dataset.decompression(gt[k])
                 # s = Dataset.decompression(s.detach().cpu().numpy())
                 Dataset.spect_to_wav(gt[k], gt_path)
-                Dataset.spect_to_wav(s, output_path)
+                Dataset.spect_to_wav(s.detach().cpu().numpy(), output_path)
                 Dataset.tensor_to_vid(vid_tensor[k], video_path)
 
     def save(self, epoch):
