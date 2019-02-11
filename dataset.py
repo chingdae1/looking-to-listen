@@ -15,7 +15,6 @@ class Dataset(data.Dataset):
         self.size = size
         self.fps = fps
         self.sr = sr
-        self.p = p
         self.frame_offset = None
         if mode is 'train':
             subdir = 'train'
