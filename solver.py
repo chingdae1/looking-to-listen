@@ -3,9 +3,6 @@ import torch.nn as nn
 import model
 from dataset import Dataset
 import os
-import librosa
-import numpy as np
-import cv2
 from torch.utils.data import DataLoader
 from submodule import vgg_face_dag
 
@@ -76,6 +73,7 @@ class Solver():
                         face_embedding = face_embedding.view(-1, 1024, 75, 1)
                         face_embedding_list.append(face_embedding)
                         audio_mix += audio_list[idx]
+                    audio_mix = Dataset.power_law_compression(audio_mix)
                     masks = self.net(face_embedding_list, audio_mix)
                     separated_list = []
                     for mask in masks:
@@ -83,6 +81,7 @@ class Solver():
                         separated_list.append(separated)
                     final_output = torch.stack(separated_list, dim=1)
                     ground_truth = torch.stack(audio_list, dim=1)  # (N, F, 2, 301, 257)
+                    ground_truth = Dataset.power_law_compression(ground_truth)
                     loss = self.MSE(final_output, ground_truth)
                     self.optim.zero_grad()
                     loss.backward()
@@ -170,7 +169,7 @@ class Solver():
             os.makedirs(batch_dir, exist_ok=True)
             mix = audio_mix[i]  # (2, 301, 257)
             mix_path = os.path.join(batch_dir, 'mix.wav')
-            Solver.spect_to_wav(mix, mix_path)
+            Dataset.spect_to_wav(mix, mix_path)
             gt = ground_truth[i]
             vid_tensor = video[i]
             idx_batch = idx_tensor[i]
@@ -189,9 +188,11 @@ class Solver():
                 output_path = os.path.join(output_dir, data_id + '.wav')
                 video_path = os.path.join(video_dir, data_id + '.mp4')
 
-                Solver.spect_to_wav(gt[k], gt_path)
-                Solver.spect_to_wav(s.detach().cpu().numpy(), output_path)
-                Solver.tensor_to_vid(vid_tensor[k], video_path)
+                gt[k] = Dataset.decompression(gt[k])
+                s = Dataset.decompression(s.detach().cpu().numpy())
+                Dataset.spect_to_wav(gt[k], gt_path)
+                Dataset.spect_to_wav(s, output_path)
+                Dataset.tensor_to_vid(vid_tensor[k], video_path)
 
     def save(self, epoch):
         checkpoint = {
@@ -199,23 +200,3 @@ class Solver():
         }
         output_path = os.path.join(self.saved_dir, 'model_' + str(epoch) + '.pt')
         torch.save(checkpoint, output_path)
-
-    @staticmethod
-    def spect_to_wav(spect, output_path, sr=16000, hop_length=160, win_length=400):
-        complex = np.ndarray((spect.shape[1], spect.shape[2]), dtype=np.complex)
-        complex.real = spect[0]
-        complex.imag = spect[1]
-        complex = np.transpose(complex, (1, 0))
-        y_hat = librosa.istft(complex, hop_length=hop_length, win_length=win_length, length=48000)
-        librosa.output.write_wav(output_path, y_hat, sr=sr)
-
-    @staticmethod
-    def tensor_to_vid(vid_tensor, output_path, fps=25.0, fourcc='mp4v', size=(224, 224)):
-        fourcc = cv2.VideoWriter_fourcc(*fourcc)
-        vid_writer = cv2.VideoWriter(output_path, fourcc, fps, (224, 224))
-
-        for frame in vid_tensor:
-            frame = frame.permute(1, 2, 0).cpu().numpy()
-            frame *= 255
-            frame = frame.astype(np.uint8)
-            vid_writer.write(frame)

@@ -15,6 +15,7 @@ class Dataset(data.Dataset):
         self.size = size
         self.fps = fps
         self.sr = sr
+        self.p = p
         self.frame_offset = None
         if mode is 'train':
             subdir = 'train'
@@ -88,6 +89,34 @@ class Dataset(data.Dataset):
         idx = idx_tensor.item()
         data_id = os.path.basename(self.all_video[idx]).replace('.mp4', '')
         return data_id
+
+    @staticmethod
+    def spect_to_wav(spect, output_path, sr=16000, hop_length=160, win_length=400):
+        complex = np.ndarray((spect.shape[1], spect.shape[2]), dtype=np.complex)
+        complex.real = spect[0]
+        complex.imag = spect[1]
+        complex = np.transpose(complex, (1, 0))
+        y_hat = librosa.istft(complex, hop_length=hop_length, win_length=win_length, length=48000)
+        librosa.output.write_wav(output_path, y_hat, sr=sr)
+
+    @staticmethod
+    def tensor_to_vid(vid_tensor, output_path, fps=25.0, fourcc='mp4v', size=(224, 224)):
+        fourcc = cv2.VideoWriter_fourcc(*fourcc)
+        vid_writer = cv2.VideoWriter(output_path, fourcc, fps, (224, 224))
+
+        for frame in vid_tensor:
+            frame = frame.permute(1, 2, 0).cpu().numpy()
+            frame *= 255
+            frame = frame.astype(np.uint8)
+            vid_writer.write(frame)
+
+    @staticmethod
+    def power_law_compression(spect, p=0.3):
+        return spect ** p
+
+    @staticmethod
+    def decompression(spect, p=0.3):
+        return spect ** (1 / p)
 
 if __name__ == '__main__':
     from torch.utils.data import DataLoader

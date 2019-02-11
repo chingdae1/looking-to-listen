@@ -1,4 +1,4 @@
-model_name: toy_test
+model_name:
 
 num_of_face: 2
 vgg_face_path: ../asset/vgg_face_dag.pth
