@@ -40,9 +40,16 @@ class Dataset(data.Dataset):
     def __getitem__(self, index):
         video_path = self.all_video[index]
         audio_path = self.all_audio[index]
-        video = self.load_video(video_path)
-        audio = self.load_audio(audio_path)
-        return video, audio, index
+        try:
+            video = self.load_video(video_path)
+            audio = self.load_audio(audio_path)
+            return video, audio, index
+        except:
+            print('[!] DATA ERROR')
+            print(video_path)
+            print(audio_path)
+            print('FRAME_OFFSET:', self.frame_offset)
+            sys.exit()
 
     def __len__(self):
         return len(self.all_video)
@@ -126,12 +133,9 @@ class Dataset(data.Dataset):
 
 if __name__ == '__main__':
     from torch.utils.data import DataLoader
-    dataset = Dataset('./data_toy', mode='toy')
-    loader = DataLoader(dataset, batch_size=2, shuffle=True, drop_last=True)
+    dataset = Dataset('/workspace2/AVS_70000', mode='train')
+    loader = DataLoader(dataset, batch_size=2, shuffle=False, drop_last=True)
 
     for step, (video, audio, index) in enumerate(loader):
-        print('---')
-        print(video.shape)  # (B, 75, 3, 224, 224)
-        print(audio.shape)  # (B, 2, 301, 257)
-        print(index)  # (B)
-        break
+        if step % 1000 == 0:
+            print(step, 'is done.')

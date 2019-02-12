@@ -110,15 +110,15 @@ class Solver():
         idx_list = []
         total_loss = 0
         cnt = 0
-        for step, (video, audio, idx) in enumerate(self.val_loader):
+        for step, (video, audio, index) in enumerate(self.val_loader):
             if (step + 1) % self.config['num_of_face'] != 0:
                 video_list.append(video.to(self.device))
                 audio_list.append(audio.to(self.device))
-                idx_list.append(idx)
+                idx_list.append(index)
             else:
                 video_list.append(video.to(self.device))
                 audio_list.append(audio.to(self.device))
-                idx_list.append(idx)
+                idx_list.append(index)
                 audio_mix = 0
                 for idx in range(self.config['num_of_face']):
                     one_face_list = []
