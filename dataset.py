@@ -134,7 +134,7 @@ class Dataset(data.Dataset):
 if __name__ == '__main__':
     from torch.utils.data import DataLoader
     dataset = Dataset('/workspace2/AVS_70000', mode='train')
-    loader = DataLoader(dataset, batch_size=2, shuffle=False, drop_last=True)
+    loader = DataLoader(dataset, batch_size=2, shuffle=False, drop_last=True, num_workers=1)
 
     for step, (video, audio, index) in enumerate(loader):
         if step % 1000 == 0:
