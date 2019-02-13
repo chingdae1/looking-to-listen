@@ -110,53 +110,54 @@ class Solver():
         idx_list = []
         total_loss = 0
         cnt = 0
-        for step, (video, audio, index) in enumerate(self.val_loader):
-            if (step + 1) % self.config['num_of_face'] != 0:
-                video_list.append(video.to(self.device))
-                audio_list.append(audio.to(self.device))
-                idx_list.append(index)
-            else:
-                video_list.append(video.to(self.device))
-                audio_list.append(audio.to(self.device))
-                idx_list.append(index)
-                audio_mix = 0
-                for idx in range(self.config['num_of_face']):
-                    one_face_list = []
-                    for video in video_list[idx]:
-                        one_face_embedding = self.vgg_face(video)
-                        one_face_list.append(one_face_embedding)
-                    face_embedding = torch.stack(one_face_list, dim=0)
-                    face_embedding = face_embedding.view(-1, 1024, 75, 1)
-                    face_embedding_list.append(face_embedding)
-                    audio_mix += audio_list[idx]
-                masks = self.net(face_embedding_list, audio_mix)
-                separated_list = []
-                for mask in masks:
-                    separated = audio_mix * mask
-                    separated_list.append(separated)
-                final_output = torch.stack(separated_list, dim=1)
-                ground_truth = torch.stack(audio_list, dim=1)  # (N, F, 2, 301, 257)
-                loss = self.MSE(final_output, ground_truth)
-                total_loss += loss
-                print('Step[{}/{}]  Loss: {:.8f}'.format(
-                    step + 1,
-                    self.val_data.__len__() // self.config['batch_size'],
-                    loss.item()
-                ))
+        with torch.no_grad():
+            for step, (video, audio, index) in enumerate(self.val_loader):
+                if (step + 1) % self.config['num_of_face'] != 0:
+                    video_list.append(video.to(self.device))
+                    audio_list.append(audio.to(self.device))
+                    idx_list.append(index)
+                else:
+                    video_list.append(video.to(self.device))
+                    audio_list.append(audio.to(self.device))
+                    idx_list.append(index)
+                    audio_mix = 0
+                    for idx in range(self.config['num_of_face']):
+                        one_face_list = []
+                        for video in video_list[idx]:
+                            one_face_embedding = self.vgg_face(video)
+                            one_face_list.append(one_face_embedding)
+                        face_embedding = torch.stack(one_face_list, dim=0)
+                        face_embedding = face_embedding.view(-1, 1024, 75, 1)
+                        face_embedding_list.append(face_embedding)
+                        audio_mix += audio_list[idx]
+                    masks = self.net(face_embedding_list, audio_mix)
+                    separated_list = []
+                    for mask in masks:
+                        separated = audio_mix * mask
+                        separated_list.append(separated)
+                    final_output = torch.stack(separated_list, dim=1)
+                    ground_truth = torch.stack(audio_list, dim=1)  # (N, F, 2, 301, 257)
+                    loss = self.MSE(final_output, ground_truth)
+                    total_loss += loss
+                    print('Step[{}/{}]  Loss: {:.8f}'.format(
+                        step + 1,
+                        self.val_data.__len__() // self.config['batch_size'],
+                        loss.item()
+                    ))
 
-                if step < self.config['sample_for']:
-                    idx_tensor = torch.stack(idx_list, dim=1)
-                    vid_tensor = torch.stack(video_list, dim=1)  # (N, F, 75, 3, 224, 224)
-                    self.get_sample(step + 1, epoch, audio_mix, final_output, ground_truth, vid_tensor, idx_tensor)
+                    if step < self.config['sample_for']:
+                        idx_tensor = torch.stack(idx_list, dim=1)
+                        vid_tensor = torch.stack(video_list, dim=1)  # (N, F, 75, 3, 224, 224)
+                        self.get_sample(step + 1, epoch, audio_mix, final_output, ground_truth, vid_tensor, idx_tensor)
 
-                video_list = []
-                audio_list = []
-                face_embedding_list = []
-                idx_list = []
-                cnt += 1
+                    video_list = []
+                    audio_list = []
+                    face_embedding_list = []
+                    idx_list = []
+                    cnt += 1
 
-        average_loss = total_loss / cnt
-        print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
+            average_loss = total_loss / cnt
+            print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
         self.net.train()
         return average_loss
 
