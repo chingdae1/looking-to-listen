@@ -3,12 +3,12 @@ model_name: toy
 num_of_face: 2
 vgg_face_path: ../asset/vgg_face_dag.pth
 
-lr: 0.00006
-epoch: 5000
+lr: 0.00003
+epoch: 20
 
 data_dir: /workspace2/AVS_70000/
-batch_size: 1
-num_workers: 8
+batch_size: 2
+num_workers: 1
 
 val_every: 1
 sample_for: 10
