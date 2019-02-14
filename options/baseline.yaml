@@ -5,6 +5,8 @@ vgg_face_path: ../asset/vgg_face_dag.pth
 
 lr: 0.00003
 epoch: 20
+factor: 0.5
+patience: 3
 
 data_dir: /workspace2/AVS_70000/
 batch_size: 2

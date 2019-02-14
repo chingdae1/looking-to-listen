@@ -37,8 +37,8 @@ class Solver():
         self.optim = torch.optim.Adam(self.net.parameters(),
                                       lr=config['lr'])
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optim,
-                                                                    factor=0.5,
-                                                                    patience=3,
+                                                                    factor=config['factor'],
+                                                                    patience=config['patience'],
                                                                     verbose=True)
         self.vgg_face = vgg_face_dag(config['vgg_face_path'])
         self.vgg_face.eval()
