@@ -46,6 +46,12 @@ class Solver():
                                                                     verbose=True)
         self.vgg_face = vgg_face_dag(config['vgg_face_path'])
         self.vgg_face.eval()
+        self.optim_vgg = torch.optim.Adam(self.vgg_face.parameters(),
+                                          lr=config['lr'])
+        self.scheduler_vgg = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optim_vgg,
+                                                                        factor=config['factor'],
+                                                                        patience=config['patience'],
+                                                                        verbose=True)
         for param in self.vgg_face.parameters():
             param.requires_grad = False
         num_ftrs = self.vgg_face.fc8.in_features
@@ -88,8 +94,10 @@ class Solver():
                     # ground_truth = Dataset.power_law_compression(ground_truth)
                     loss = self.MSE(final_output, ground_truth)
                     self.optim.zero_grad()
+                    self.optim_vgg.zero_grad()
                     loss.backward()
                     self.optim.step()
+                    self.optim_vgg.step()
 
                     print('Epoch[{}/{}]  Step[{}/{}]  Loss: {:.8f}'.format(
                         epoch + 1, self.config['epoch'], step + 1,
@@ -103,6 +111,7 @@ class Solver():
             if (epoch + 1) % self.config['val_every'] == 0:
                 val_loss = self.validation(epoch + 1)
                 self.scheduler.step(val_loss)
+                self.scheduler_vgg.step(val_loss)
             self.save(epoch)
 
     def validation(self, epoch):
@@ -203,5 +212,10 @@ class Solver():
         checkpoint = {
             'net': self.net.state_dict()
         }
+        checkpoint_vgg = {
+            'net': self.vgg_face.state_dict()
+        }
         output_path = os.path.join(self.saved_dir, 'model_' + str(epoch) + '.pt')
+        output_path_vgg = os.path.join(self.saved_dir, 'model_vgg_' + str(epoch) + '.pt')
         torch.save(checkpoint, output_path)
+        torch.save(checkpoint_vgg, output_path_vgg)
