@@ -33,6 +33,10 @@ class Solver():
                                      shuffle=True,
                                      drop_last=True)
         self.net = model.Net(config['num_of_face'], self.device).to(self.device)
+        if config['load_model']:
+            print('Load pretrained model..')
+            state_dict = torch.load(config['load_path'])
+            self.net.load_state_dict(state_dict)
         self.MSE = torch.nn.MSELoss()
         self.optim = torch.optim.Adam(self.net.parameters(),
                                       lr=config['lr'])
