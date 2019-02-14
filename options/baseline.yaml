@@ -18,4 +18,4 @@ val_sample_dir: ./val_sample
 save_dir: ./saved
 
 load_model: True
-load_path: ./saved/model_1.pt
+load_path: ./saved/no_compress_basic_1/model_1.pt
