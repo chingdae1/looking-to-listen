@@ -118,6 +118,7 @@ class Net(nn.Module):
         av_fusion = av_fusion.view((-1, av_fusion.shape[2], av_fusion.shape[1]))  # (N, 301, 8*257 + 256*num_of_face)
         lstm_output, _ = self.BLSTM(av_fusion)
         x = lstm_output.view(-1, lstm_output.shape[1], lstm_output.shape[2])  # (N, 301, 400)
+        x = F.relu(x)
         x_out_list = []
         for i in range(x.shape[1]):
             x_out = self.fc1(x[:, i, :])
