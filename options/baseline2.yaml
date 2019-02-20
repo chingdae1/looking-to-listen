@@ -19,3 +19,5 @@ save_dir: ./saved
 
 load_model: False
 load_path: /
+load_vgg: False
+load_vgg_path: ./

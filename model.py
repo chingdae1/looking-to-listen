@@ -125,7 +125,7 @@ class Net(nn.Module):
             x_out = self.fc2(x_out)
             x_out = F.relu(x_out)
             x_out = self.fc3(x_out)
-            x_out = F.relu(x_out)
+            x_out = F.sigmoid(x_out)
             x_out_list.append(x_out)
         x = torch.stack(x_out_list, dim=1)
         spec_size = 2*257

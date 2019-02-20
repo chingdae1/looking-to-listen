@@ -56,6 +56,10 @@ class Solver():
             param.requires_grad = False
         num_ftrs = self.vgg_face.fc8.in_features
         self.vgg_face.fc8 = nn.Linear(num_ftrs, 1024)
+        if config['load_vgg']:
+            print('Load pretrained vgg face..')
+            state_dict = torch.load(config['load_vgg_path'])
+            self.vgg_face.load_state_dict(state_dict)
         self.vgg_face = self.vgg_face.to(self.device)
         self.saved_dir = os.path.join(config['save_dir'], config['model_name'])
         os.makedirs(self.saved_dir, exist_ok=True)

@@ -19,3 +19,5 @@ save_dir: ./saved
 
 load_model: False
 load_path: ./saved/no_compress_basic_1/model_1.pt
+load_vgg: False
+load_vgg_path: ./
