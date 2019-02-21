@@ -32,8 +32,8 @@ class Dataset(data.Dataset):
 
         ########## TOY TEST ##########
         ## [!] solver 에 val dataset mode train 으로 바꿔라
-        self.all_video = self.all_video[:2]
-        self.all_audio = self.all_audio[:2]
+        self.all_video = self.all_video[:100]
+        self.all_audio = self.all_audio[:100]
 
         print(len(self.all_video), 'video has been found.')
         print(len(self.all_audio), 'audio has been found.')
