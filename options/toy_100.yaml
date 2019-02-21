@@ -12,7 +12,7 @@ data_dir: /workspace2/AVS_70000/
 batch_size: 2
 num_workers: 8
 
-val_every: 1
+val_every: 50
 sample_for: 20
 val_sample_dir: ./val_sample
 save_dir: ./saved
