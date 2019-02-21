@@ -4,7 +4,7 @@ num_of_face: 2
 vgg_face_path: ../asset/vgg_face_dag.pth
 
 lr: 0.00003
-epoch: 200
+epoch: 2000
 factor: 0.5
 patience: 3
 
@@ -12,7 +12,7 @@ data_dir: /workspace2/AVS_70000/
 batch_size: 2
 num_workers: 8
 
-val_every: 50
+val_every: 200
 sample_for: 20
 val_sample_dir: ./val_sample
 save_dir: ./saved
