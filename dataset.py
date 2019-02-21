@@ -31,8 +31,9 @@ class Dataset(data.Dataset):
         self.all_audio = sorted(glob.glob(os.path.join(data_dir, subdir, 'numpy', 'audio', '*.npy')))
 
         ########## TOY TEST ##########
-        self.all_video = self.all_video[:100]
-        self.all_audio = self.all_audio[:100]
+        ## [!] solver 에 val dataset mode train 으로 바꿔라
+        self.all_video = self.all_video[:2]
+        self.all_audio = self.all_audio[:2]
 
         print(len(self.all_video), 'video has been found.')
         print(len(self.all_audio), 'audio has been found.')
