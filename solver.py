@@ -98,10 +98,10 @@ class Solver():
                     # ground_truth = Dataset.power_law_compression(ground_truth)
                     loss = self.MSE(final_output, ground_truth)
                     self.optim.zero_grad()
-                    self.optim_vgg.zero_grad()
+                    # self.optim_vgg.zero_grad()
                     loss.backward()
                     self.optim.step()
-                    self.optim_vgg.step()
+                    # self.optim_vgg.step()
 
                     print('Epoch[{}/{}]  Step[{}/{}]  Loss: {:.8f}'.format(
                         epoch + 1, self.config['epoch'], step + 1,
@@ -156,7 +156,7 @@ class Solver():
                     ground_truth = torch.stack(audio_list, dim=1)  # (N, F, 2, 301, 257)
                     loss = self.MSE(final_output, ground_truth)
                     total_loss += loss
-                    print('Step[{}/{}]  Loss: {:.8f}'.format(
+                    print('[val] Step[{}/{}]  Loss: {:.8f}'.format(
                         step + 1,
                         self.val_data.__len__() // self.config['batch_size'],
                         loss.item()
