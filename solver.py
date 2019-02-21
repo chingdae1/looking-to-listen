@@ -12,11 +12,11 @@ class Solver():
         self.config = config
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.train_data = Dataset(data_dir=config['data_dir'],
-                                  mode='train')
+                                  mode='toy')
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=config['batch_size'],
                                        num_workers=config['num_workers'],
-                                       shuffle=False,
+                                       shuffle=True,
                                        drop_last=True)
         self.test_data = Dataset(data_dir=config['data_dir'],
                                  mode='test')
@@ -26,11 +26,11 @@ class Solver():
                                       shuffle=True,
                                       drop_last=True)
         self.val_data = Dataset(data_dir=config['data_dir'],
-                                mode='train')
+                                mode='toy')
         self.val_loader = DataLoader(self.val_data,
                                      batch_size=config['batch_size'],
                                      num_workers=config['num_workers'],
-                                     shuffle=False,
+                                     shuffle=True,
                                      drop_last=True)
         self.net = model.Net(config['num_of_face'], self.device).to(self.device)
         if config['load_model']:
