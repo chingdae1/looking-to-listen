@@ -30,6 +30,10 @@ class Dataset(data.Dataset):
         self.all_video = sorted(glob.glob(os.path.join(data_dir, subdir, 'original', 'cropped', '*.mp4')))
         self.all_audio = sorted(glob.glob(os.path.join(data_dir, subdir, 'numpy', 'audio', '*.npy')))
 
+        ########## TOY TEST ##########
+        self.all_video = self.all_video[:100]
+        self.all_audio = self.all_audio[:100]
+
         print(len(self.all_video), 'video has been found.')
         print(len(self.all_audio), 'audio has been found.')
 

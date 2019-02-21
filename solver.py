@@ -26,7 +26,7 @@ class Solver():
                                       shuffle=True,
                                       drop_last=True)
         self.val_data = Dataset(data_dir=config['data_dir'],
-                                mode='val')
+                                mode='train')
         self.val_loader = DataLoader(self.val_data,
                                      batch_size=config['batch_size'],
                                      num_workers=config['num_workers'],
