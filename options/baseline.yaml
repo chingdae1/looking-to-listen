@@ -25,6 +25,6 @@ load_vgg_path: ./
 
 multi_gpu: True
 gpu_ids:
-    - '0'
-    - '1'
-    - '2'
+    - 0
+    - 1
+    - 2
