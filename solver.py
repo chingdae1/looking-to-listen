@@ -12,7 +12,7 @@ class Solver():
         self.config = config
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.train_data = Dataset(data_dir=config['data_dir'],
-                                  mode='train')
+                                  mode='toy')
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=config['batch_size'],
                                        num_workers=config['num_workers'],
@@ -26,7 +26,7 @@ class Solver():
                                       shuffle=True,
                                       drop_last=True)
         self.val_data = Dataset(data_dir=config['data_dir'],
-                                mode='val')
+                                mode='toy')
         self.val_loader = DataLoader(self.val_data,
                                      batch_size=config['batch_size'],
                                      num_workers=config['num_workers'],
@@ -153,6 +153,7 @@ class Solver():
                         face_embedding_list.append(face_embedding)
                         audio_mix += audio_list[idx]
                     masks = self.net(face_embedding_list, audio_mix)
+                    masks = masks.permute(1, 0, 2, 3, 4)  # (F, N, 2, 301, 257)
                     separated_list = []
                     for mask in masks:
                         separated = audio_mix * mask
