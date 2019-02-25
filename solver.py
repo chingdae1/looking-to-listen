@@ -95,8 +95,8 @@ class Solver():
                     print(masks.shape)
                     separated_list = []
                     for mask in masks:
-                        # print(audio_mix.shape)
-                        # print(mask.shape)
+                        print(audio_mix.shape)
+                        print(mask.shape)
                         separated = audio_mix * mask
                         separated_list.append(separated)
                     final_output = torch.stack(separated_list, dim=1)
