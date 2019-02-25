@@ -40,6 +40,7 @@ class Dataset(data.Dataset):
     def __getitem__(self, index):
         video_path = self.all_video[index]
         audio_path = self.all_audio[index]
+        print(video_path)
         try:
             video = self.load_video(video_path)
             audio = self.load_audio(audio_path)
@@ -71,13 +72,13 @@ class Dataset(data.Dataset):
         # offset_boundary = 0
 
         self.frame_offset = random.randint(0, offset_boundary)
-
-        for idx in range(self.frame_offset, self.frame_offset + target_length):
+        vc.set(cv2.CAP_PROP_POS_FRAMES, self.frame_offset)
+        for idx in range(0, target_length):
             frame = vc.read()[1]
             frame = torch.from_numpy(frame)
             # HWC2CHW
             frame = frame.permute(2, 0, 1)
-            frames[idx - self.frame_offset, :, :, :] = frame
+            frames[idx, :, :, :] = frame
         frames /= 255
         return frames
 
@@ -134,15 +135,13 @@ class Dataset(data.Dataset):
 if __name__ == '__main__':
     from torch.utils.data import DataLoader
 
-    dataset = Dataset('/workspace2/AVS_70000', mode='train')
-    loader = DataLoader(dataset, batch_size=2, shuffle=False, drop_last=True, num_workers=1)
+    dataset = Dataset('./data_toy', mode='toy')
+    loader = DataLoader(dataset, batch_size=1, shuffle=False, drop_last=True, num_workers=0)
 
     index = 0
-    try:
-        for step, (video, audio, index) in enumerate(loader):
-            if step % 1000 == 0:
-                print(step, 'is done.')
-    except:
-        print('[!] LOADER ERROR')
-        print(index)
-        print(dataset.frame_offset)
+    for step, (video, audio, index) in enumerate(loader):
+        video = video[0]
+        audio = audio[0]
+        Dataset.spect_to_wav(audio, './sample.wav')
+        Dataset.tensor_to_vid(video, './sample.mp4')
+        break
