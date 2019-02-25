@@ -139,8 +139,6 @@ if __name__ == '__main__':
 
     index = 0
     for step, (video, audio, index) in enumerate(loader):
-        video = video[0]
-        audio = audio[0]
-        Dataset.spect_to_wav(audio, './sample.wav')
-        Dataset.tensor_to_vid(video, './sample.mp4')
+        print(video.shape)
+        print(audio.shape)
         break
