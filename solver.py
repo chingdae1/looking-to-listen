@@ -92,10 +92,11 @@ class Solver():
                         audio_mix += audio_list[idx]
                     # audio_mix = Dataset.power_law_compression(audio_mix)
                     masks = self.net(face_embedding_list, audio_mix)
+                    print(masks.shape)
                     separated_list = []
                     for mask in masks:
-                        print(audio_mix.shape)
-                        print(mask.shape)
+                        # print(audio_mix.shape)
+                        # print(mask.shape)
                         separated = audio_mix * mask
                         separated_list.append(separated)
                     final_output = torch.stack(separated_list, dim=1)
