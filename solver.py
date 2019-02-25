@@ -92,7 +92,7 @@ class Solver():
                         audio_mix += audio_list[idx]
                     # audio_mix = Dataset.power_law_compression(audio_mix)
                     masks = self.net(face_embedding_list, audio_mix)
-                    masks = masks.permute(1, 0, 2, 3, 4)
+                    masks = masks.permute(1, 0, 2, 3, 4)  # (F, N, 2, 301, 257)
                     separated_list = []
                     for mask in masks:
                         separated = audio_mix * mask

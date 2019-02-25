@@ -10,7 +10,7 @@ patience: 3
 
 data_dir: /workspace2/AVS_70000/
 batch_size: 6
-num_workers: 8
+num_workers: 32
 
 val_every: 1
 save_every: 1
@@ -27,4 +27,3 @@ multi_gpu: True
 gpu_ids:
     - 0
     - 1
-    - 2
