@@ -38,6 +38,7 @@ class Solver():
             state_dict = torch.load(config['load_path'])
             self.net.load_state_dict(state_dict)
         if config['multi_gpu']:
+            print('Use Multi GPU')
             self.net = torch.nn.DataParallel(self.net, device_ids=config['gpu_ids'])
         self.MSE = torch.nn.MSELoss()
         self.optim = torch.optim.Adam(self.net.parameters(),
@@ -91,6 +92,7 @@ class Solver():
                         audio_mix += audio_list[idx]
                     # audio_mix = Dataset.power_law_compression(audio_mix)
                     masks = self.net(face_embedding_list, audio_mix)
+                    print(masks.shape)
                     separated_list = []
                     for mask in masks:
                         separated = audio_mix * mask
