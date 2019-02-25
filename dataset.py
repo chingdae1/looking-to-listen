@@ -40,7 +40,6 @@ class Dataset(data.Dataset):
     def __getitem__(self, index):
         video_path = self.all_video[index]
         audio_path = self.all_audio[index]
-        print(video_path)
         try:
             video = self.load_video(video_path)
             audio = self.load_audio(audio_path)
