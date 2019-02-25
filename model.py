@@ -136,7 +136,7 @@ class Net(nn.Module):
             mask = x[:, :, start:start+spec_size]
             mask_list.append(mask)
         x = torch.stack(mask_list, dim=0)
-        x = x.view(self.num_of_face, -1, 2, 301, 257)  # (F, N, 2, 301, 257)
+        x = x.view(-1, self.num_of_face, 2, 301, 257)  # (N, F, 2, 301, 257)
         print('------')
         print(x.shape)
         return x

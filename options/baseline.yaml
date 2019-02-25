@@ -23,7 +23,7 @@ load_path: /
 load_vgg: False
 load_vgg_path: ./
 
-multi_gpu: True
+multi_gpu: False
 gpu_ids:
     - 0
     - 1
