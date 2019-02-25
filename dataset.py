@@ -27,7 +27,6 @@ class Dataset(data.Dataset):
         else:
             print('[!] Dataset mode error.')
             sys.exit()
-
         self.all_video = sorted(glob.glob(os.path.join(data_dir, subdir, 'original', 'cropped', '*.mp4')))
         self.all_audio = sorted(glob.glob(os.path.join(data_dir, subdir, 'numpy', 'audio', '*.npy')))
 
@@ -69,7 +68,7 @@ class Dataset(data.Dataset):
             offset_boundary = 0
 
         # [!][!][!][!] For toy test only [!][!][!][!]
-        offset_boundary = 0
+        # offset_boundary = 0
 
         self.frame_offset = random.randint(0, offset_boundary)
 
