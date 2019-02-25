@@ -137,6 +137,8 @@ class Net(nn.Module):
             mask_list.append(mask)
         x = torch.stack(mask_list, dim=0)
         x = x.view(self.num_of_face, -1, 2, 301, 257)  # (F, N, 2, 301, 257)
+        print('------')
+        print(x.shape)
         return x
 
 
