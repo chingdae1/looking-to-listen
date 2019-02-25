@@ -116,7 +116,8 @@ class Solver():
                 val_loss = self.validation(epoch + 1)
                 self.scheduler.step(val_loss)
                 self.scheduler_vgg.step(val_loss)
-            self.save(epoch)
+            if (epoch + 1) % self.config['save_every'] == 0:
+                self.save(epoch)
 
     def validation(self, epoch):
         print('Start validation..')
