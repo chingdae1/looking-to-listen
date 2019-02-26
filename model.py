@@ -109,16 +109,16 @@ class Net(nn.Module):
             video_stream_output = self.video_stream(face_embedding).to(self.device)
             video_stream_output_list.append(video_stream_output)
         audio_stream_output = self.audio_stream(spectrogram)
-        audio_stream_output = audio_stream_output.view((-1,
-                                                        audio_stream_output.shape[1] * audio_stream_output.shape[3],
-                                                        audio_stream_output.shape[2]))
+        audio_stream_output = audio_stream_output.permute(0, 1, 3, 2)
+        audio_stream_output = audio_stream_output.contiguous().view((-1,
+                                                        audio_stream_output.shape[1] * audio_stream_output.shape[2],
+                                                        audio_stream_output.shape[3]))
         video_stream_cat = torch.cat(video_stream_output_list, dim=1)
         video_stream_cat = video_stream_cat.view((-1, video_stream_cat.shape[1], video_stream_cat.shape[2]))
         av_fusion = torch.cat([video_stream_cat, audio_stream_output], dim=1)
-        av_fusion = av_fusion.view((-1, av_fusion.shape[2], av_fusion.shape[1]))  # (N, 301, 8*257 + 256*num_of_face)
+        av_fusion = av_fusion.permute(0, 2, 1)
         lstm_output, _ = self.BLSTM(av_fusion)
-        x = lstm_output.view(-1, lstm_output.shape[1], lstm_output.shape[2])  # (N, 301, 400)
-        x = F.relu(x)
+        x = F.relu(lstm_output)
         x_out_list = []
         for i in range(x.shape[1]):
             x_out = self.fc1(x[:, i, :])
@@ -136,7 +136,8 @@ class Net(nn.Module):
             mask = x[:, :, start:start+spec_size]
             mask_list.append(mask)
         x = torch.stack(mask_list, dim=0)
-        x = x.view(-1, self.num_of_face, 2, 301, 257)  # (N, F, 2, 301, 257)
+        x = x.view(-1, self.num_of_face, 301, 2, 257)
+        x = x.permute(0, 1, 3, 2, 4)  # (N, F, 2, 301, 257)
         return x
 
 
@@ -148,5 +149,6 @@ if __name__ == '__main__':
     # face_embedding_list = [face_embedding_1, face_embedding_2, face_embedding_3, face_embedding_4]
     face_embedding_list = [face_embedding_1]
     audio_embedding = torch.empty((1, 2, 301, 257))
-    net = Net(len(face_embedding_list))
+    device = torch.device('cpu')
+    net = Net(len(face_embedding_list), device)
     net(face_embedding_list, audio_embedding)
