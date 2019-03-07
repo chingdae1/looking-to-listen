@@ -117,7 +117,7 @@ class Net(nn.Module):
         video_stream_cat = video_stream_cat.view((-1, video_stream_cat.shape[1], video_stream_cat.shape[2]))
         av_fusion = torch.cat([video_stream_cat, audio_stream_output], dim=1)
         av_fusion = av_fusion.permute(0, 2, 1)  # (N, 301, 8*257 + 256*F)
-        lstm_output, _ = self.BLSTM(av_fusion)
+        lstm_output, _ = self.BLSTM(av_fusion)  # (N, 301, 400)
         x = F.relu(lstm_output)
         x_out_list = []
         for i in range(x.shape[1]):
@@ -126,9 +126,9 @@ class Net(nn.Module):
             x_out = self.fc2(x_out)
             x_out = F.relu(x_out)
             x_out = self.fc3(x_out)
-            x_out = F.sigmoid(x_out)
+            x_out = torch.sigmoid(x_out)
             x_out_list.append(x_out)
-        x = torch.stack(x_out_list, dim=1)
+        x = torch.stack(x_out_list, dim=1)  # (N, 301, F*514)
         spec_size = 2*257
         mask_list = []
         for i in range(self.num_of_face):
