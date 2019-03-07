@@ -1,0 +1,29 @@
+model_name: toy_100
+
+num_of_face: 2
+vgg_face_path: ../asset/vgg_face_dag.pth
+
+lr: 0.00003
+epoch: 10000
+factor: 0.5
+patience: 3
+
+data_dir: /workspace2/AVS_70000/
+batch_size: 6
+num_workers: 8
+
+val_every: 500
+save_every: 1000
+sample_for: 20
+val_sample_dir: ./val_sample
+save_dir: ./saved
+
+load_model: False
+load_path: /
+load_vgg: False
+load_vgg_path: ./
+
+multi_gpu: False
+gpu_ids:
+    - 0
+    - 1
