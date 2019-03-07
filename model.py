@@ -109,14 +109,15 @@ class Net(nn.Module):
             video_stream_output = self.video_stream(face_embedding).to(self.device)
             video_stream_output_list.append(video_stream_output)
         audio_stream_output = self.audio_stream(spectrogram)
-        audio_stream_output = audio_stream_output.permute(0, 1, 3, 2)
+        audio_stream_output = audio_stream_output.permute(0, 1, 3, 2)  # (N, 8, 257, 301)
         audio_stream_output = audio_stream_output.contiguous().view((-1,
                                                         audio_stream_output.shape[1] * audio_stream_output.shape[2],
-                                                        audio_stream_output.shape[3]))
-        video_stream_cat = torch.cat(video_stream_output_list, dim=1)
+                                                        audio_stream_output.shape[3]))  # (N, 8*257, 301)
+        video_stream_cat = torch.cat(video_stream_output_list, dim=1)  # (N, 256*F, 301, 1)
         video_stream_cat = video_stream_cat.view((-1, video_stream_cat.shape[1], video_stream_cat.shape[2]))
         av_fusion = torch.cat([video_stream_cat, audio_stream_output], dim=1)
-        av_fusion = av_fusion.permute(0, 2, 1)
+        print(av_fusion.shape)
+        av_fusion = av_fusion.permute(0, 2, 1)  # (N, 301, 8*257 + 256*F)
         lstm_output, _ = self.BLSTM(av_fusion)
         x = F.relu(lstm_output)
         x_out_list = []
