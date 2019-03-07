@@ -87,7 +87,7 @@ class Solver():
                             one_face_embedding = self.vgg_face(video)
                             one_face_list.append(one_face_embedding)
                         face_embedding = torch.stack(one_face_list, dim=0)
-                        face_embedding - face_embedding.permute(0, 2, 1)  # (N, 1024, 75)
+                        face_embedding = face_embedding.permute(0, 2, 1)  # (N, 1024, 75)
                         face_embedding = face_embedding.view(-1, 1024, 75, 1)
                         face_embedding_list.append(face_embedding)
                         audio_mix += audio_list[idx]
