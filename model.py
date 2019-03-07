@@ -136,6 +136,7 @@ class Net(nn.Module):
             mask = x[:, :, start:start+spec_size]
             mask_list.append(mask)
         x = torch.stack(mask_list, dim=0)
+        x = x.permute(1, 0, 2, 3)  # (N, F, 301, 514)
         x = x.view(-1, self.num_of_face, 301, 2, 257)
         x = x.permute(0, 1, 3, 2, 4)  # (N, F, 2, 301, 257)
         return x
@@ -147,7 +148,7 @@ if __name__ == '__main__':
     # face_embedding_3 = torch.empty((1, 1024, 75, 1))
     # face_embedding_4 = torch.empty((1, 1024, 75, 1))
     # face_embedding_list = [face_embedding_1, face_embedding_2, face_embedding_3, face_embedding_4]
-    face_embedding_list = [face_embedding_1]
+    face_embedding_list = [face_embedding_1, face_embedding_1]
     audio_embedding = torch.empty((1, 2, 301, 257))
     device = torch.device('cpu')
     net = Net(len(face_embedding_list), device)
