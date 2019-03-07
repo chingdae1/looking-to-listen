@@ -31,8 +31,8 @@ class Dataset(data.Dataset):
         self.all_audio = sorted(glob.glob(os.path.join(data_dir, subdir, 'numpy', 'audio', '*.npy')))
 
         ## TOY
-        self.all_video = self.all_video[:100]
-        self.all_audio = self.all_audio[:100]
+        # self.all_video = self.all_video[:100]
+        # self.all_audio = self.all_audio[:100]
 
         print(len(self.all_video), 'video has been found.')
         print(len(self.all_audio), 'audio has been found.')
@@ -143,6 +143,6 @@ if __name__ == '__main__':
 
     index = 0
     for step, (video, audio, index) in enumerate(loader):
-        print(video.shape)
-        print(audio.shape)
+        print(video.shape)  # (N, 75, 3, 224, 224)
+        print(audio.shape)  # (N, 2, 301, 257)
         break

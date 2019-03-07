@@ -26,7 +26,7 @@ class Solver():
                                       shuffle=True,
                                       drop_last=True)
         self.val_data = Dataset(data_dir=config['data_dir'],
-                                mode='train')
+                                mode='val')
         self.val_loader = DataLoader(self.val_data,
                                      batch_size=config['batch_size'],
                                      num_workers=config['num_workers'],
@@ -87,7 +87,10 @@ class Solver():
                             one_face_embedding = self.vgg_face(video)
                             one_face_list.append(one_face_embedding)
                         face_embedding = torch.stack(one_face_list, dim=0)
+                        print(face_embedding.shape)
                         face_embedding = face_embedding.view(-1, 1024, 75, 1)
+                        print(face_embedding.shape)
+                        print('------------')
                         face_embedding_list.append(face_embedding)
                         audio_mix += audio_list[idx]
                     # audio_mix = Dataset.power_law_compression(audio_mix)
