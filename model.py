@@ -116,7 +116,6 @@ class Net(nn.Module):
         video_stream_cat = torch.cat(video_stream_output_list, dim=1)  # (N, 256*F, 301, 1)
         video_stream_cat = video_stream_cat.view((-1, video_stream_cat.shape[1], video_stream_cat.shape[2]))
         av_fusion = torch.cat([video_stream_cat, audio_stream_output], dim=1)
-        print(av_fusion.shape)
         av_fusion = av_fusion.permute(0, 2, 1)  # (N, 301, 8*257 + 256*F)
         lstm_output, _ = self.BLSTM(av_fusion)
         x = F.relu(lstm_output)
