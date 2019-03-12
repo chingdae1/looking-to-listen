@@ -1,4 +1,4 @@
-model_name: baseline_scratch
+model_name: baseline_255
 
 num_of_face: 2
 vgg_from_scratch: False
