@@ -17,7 +17,7 @@ val_every: 1
 sample_for: 20
 val_sample_dir: ./val_sample
 save_dir: ./saved
-save_every: 1000
+save_every: 1
 
 load_model: False
 load_path: /
