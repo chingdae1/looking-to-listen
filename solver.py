@@ -69,7 +69,7 @@ class Solver():
             checkpoint = torch.load(config['load_vgg_path'])
             state_dict = checkpoint['net']
             self.vgg_face.load_state_dict(state_dict)
-        # self.vgg_face = self.vgg_face.to(self.device)
+        self.vgg_face = self.vgg_face.to(self.device)
         self.saved_dir = os.path.join(config['save_dir'], config['model_name'])
         os.makedirs(self.saved_dir, exist_ok=True)
 
