@@ -1,7 +1,7 @@
 model_name: baseline_scratch
 
 num_of_face: 2
-vgg_from_scratch: True
+vgg_from_scratch: False
 vgg_face_path: ../asset/vgg_face_dag.pth
 
 lr: 0.00003
