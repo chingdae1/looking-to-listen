@@ -12,7 +12,7 @@ class Solver():
         self.config = config
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.train_data = Dataset(data_dir=config['data_dir'],
-                                  mode='toy')
+                                  mode='train')
         self.train_loader = DataLoader(self.train_data,
                                        batch_size=config['batch_size'],
                                        num_workers=config['num_workers'],
@@ -26,7 +26,7 @@ class Solver():
                                       shuffle=True,
                                       drop_last=True)
         self.val_data = Dataset(data_dir=config['data_dir'],
-                                mode='toy')
+                                mode='val')
         self.val_loader = DataLoader(self.val_data,
                                      batch_size=config['batch_size'],
                                      num_workers=config['num_workers'],
@@ -38,9 +38,7 @@ class Solver():
             checkpoint = torch.load(config['load_path'])
             state_dict = checkpoint['net']
             self.net.load_state_dict(state_dict)
-        if config['multi_gpu']:
-            print('Use Multi GPU')
-            self.net = torch.nn.DataParallel(self.net, device_ids=config['gpu_ids'])
+
         self.MSE = torch.nn.MSELoss()
         self.optim = torch.optim.Adam(self.net.parameters(),
                                       lr=config['lr'])
@@ -69,6 +67,9 @@ class Solver():
             state_dict = checkpoint['net']
             self.vgg_face.load_state_dict(state_dict)
         self.vgg_face = self.vgg_face.to(self.device)
+        if config['multi_gpu']:
+            print('Use Multi GPU')
+            self.net = torch.nn.DataParallel(self.net, device_ids=config['gpu_ids'])
         self.saved_dir = os.path.join(config['save_dir'], config['model_name'])
         os.makedirs(self.saved_dir, exist_ok=True)
 

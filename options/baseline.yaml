@@ -1,11 +1,11 @@
-model_name: baseline_1
+model_name: baseline_scratch
 
 num_of_face: 2
-vgg_from_scratch: False
+vgg_from_scratch: True
 vgg_face_path: ../asset/vgg_face_dag.pth
 
 lr: 0.00003
-epoch: 20
+epoch: 40
 factor: 0.5
 patience: 3
 
@@ -19,10 +19,10 @@ sample_for: 20
 val_sample_dir: ./val_sample
 save_dir: ./saved
 
-load_model: True
-load_path: ./saved/baseline_1/model_14.pt
-load_vgg: True
-load_vgg_path: ./saved/baseline_1/model_vgg_14.pt
+load_model: False
+load_path: ./
+load_vgg: False
+load_vgg_path: ./
 
 multi_gpu: True
 gpu_ids:
