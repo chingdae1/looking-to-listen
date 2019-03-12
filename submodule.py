@@ -97,6 +97,9 @@ def vgg_face_dag(weights_path=None, **kwargs):
     """
     model = VggFace()
     if weights_path:
+        print('Load pretrained VGG..')
         state_dict = torch.load(weights_path)
         model.load_state_dict(state_dict)
+    else:
+        print('Load non-trained VGG..')
     return model

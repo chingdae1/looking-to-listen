@@ -36,6 +36,8 @@ class Solver():
         if config['load_model']:
             print('Load pretrained model..')
             state_dict = torch.load(config['load_path'])
+            print(state_dict)
+            print('===================')
             self.net.load_state_dict(state_dict)
         if config['multi_gpu']:
             print('Use Multi GPU')
@@ -47,18 +49,21 @@ class Solver():
                                                                     factor=config['factor'],
                                                                     patience=config['patience'],
                                                                     verbose=True)
-        self.vgg_face = vgg_face_dag(config['vgg_face_path'])
-        self.vgg_face.eval()
+        if not config['vgg_from_scratch']:
+            self.vgg_face = vgg_face_dag(config['vgg_face_path'])
+            self.vgg_face.eval()
+            for param in self.vgg_face.parameters():
+                param.requires_grad = False
+        else:
+            self.vgg_face = vgg_face_dag()
+        num_ftrs = self.vgg_face.fc8.in_features
+        self.vgg_face.fc8 = nn.Linear(num_ftrs, 1024)
         self.optim_vgg = torch.optim.Adam(self.vgg_face.parameters(),
                                           lr=config['lr'])
         self.scheduler_vgg = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optim_vgg,
                                                                         factor=config['factor'],
                                                                         patience=config['patience'],
                                                                         verbose=True)
-        for param in self.vgg_face.parameters():
-            param.requires_grad = False
-        num_ftrs = self.vgg_face.fc8.in_features
-        self.vgg_face.fc8 = nn.Linear(num_ftrs, 1024)
         if config['load_vgg']:
             print('Load pretrained vgg face..')
             state_dict = torch.load(config['load_vgg_path'])
@@ -127,6 +132,7 @@ class Solver():
     def validation(self, epoch):
         print('Start validation..')
         self.net.eval()
+        self.vgg_face.eval()
         video_list = []
         audio_list = []
         face_embedding_list = []
@@ -184,6 +190,8 @@ class Solver():
             average_loss = total_loss / cnt
             print('[Validation {}] Average Loss: {:.8f}'.format(epoch, average_loss))
         self.net.train()
+        if self.config['vgg_from_scratch']:
+            self.vgg_face.train()
         return average_loss
 
     def get_sample(self, step, epoch, audio_mix, final_output, ground_truth, video, idx_tensor):
