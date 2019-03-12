@@ -37,7 +37,7 @@ class Solver():
             print('Load pretrained model..')
             checkpoint = torch.load(config['load_path'])
             state_dict = checkpoint['net']
-            self.net.module.load_state_dict(state_dict)
+            self.net.load_state_dict(state_dict)
         if config['multi_gpu']:
             print('Use Multi GPU')
             self.net = torch.nn.DataParallel(self.net, device_ids=config['gpu_ids'])
