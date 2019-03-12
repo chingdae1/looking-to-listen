@@ -107,7 +107,7 @@ class Net(nn.Module):
         video_stream_output_list = []
         for face_embedding in face_embedding_list:
             face_embedding.cuda(device=0)
-            video_stream_output = self.video_stream(face_embedding).to(self.device)
+            video_stream_output = self.video_stream(face_embedding)
             video_stream_output_list.append(video_stream_output)
         audio_stream_output = self.audio_stream(spectrogram)
         audio_stream_output = audio_stream_output.permute(0, 1, 3, 2)  # (N, 8, 257, 301)

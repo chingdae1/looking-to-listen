@@ -32,7 +32,7 @@ class Solver():
                                      num_workers=config['num_workers'],
                                      shuffle=True,
                                      drop_last=True)
-        self.net = model.Net(config['num_of_face'], self.device).to(self.device)
+        self.net = model.Net(config['num_of_face'], self.device)
         if config['load_model']:
             print('Load pretrained model..')
             checkpoint = torch.load(config['load_path'])
