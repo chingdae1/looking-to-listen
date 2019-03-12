@@ -1,6 +1,7 @@
 model_name: toy_100
 
 num_of_face: 2
+vgg_from_scratch: False
 vgg_face_path: ../asset/vgg_face_dag.pth
 
 lr: 0.00003
@@ -12,7 +13,7 @@ data_dir: /workspace2/AVS_70000/
 batch_size: 1
 num_workers: 8
 
-val_every: 500
+val_every: 1
 sample_for: 20
 val_sample_dir: ./val_sample
 save_dir: ./saved
