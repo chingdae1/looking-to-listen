@@ -55,6 +55,7 @@ class Solver():
                 param.requires_grad = False
         else:
             self.vgg_face = vgg_face_dag()
+        self.vgg_face = torch.nn.DataParallel(self.vgg_face, device_ids=config['gpu_ids'])
         num_ftrs = self.vgg_face.fc8.in_features
         self.vgg_face.fc8 = nn.Linear(num_ftrs, 1024)
         self.optim_vgg = torch.optim.Adam(self.vgg_face.parameters(),
@@ -233,7 +234,7 @@ class Solver():
             'net': self.net.module.state_dict()
         }
         checkpoint_vgg = {
-            'net': self.vgg_face.state_dict()
+            'net': self.vgg_face.module.state_dict()
         }
         output_path = os.path.join(self.saved_dir, 'model_' + str(epoch) + '.pt')
         output_path_vgg = os.path.join(self.saved_dir, 'model_vgg_' + str(epoch) + '.pt')
