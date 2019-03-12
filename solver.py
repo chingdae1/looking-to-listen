@@ -40,8 +40,7 @@ class Solver():
             self.net.load_state_dict(state_dict)
         if config['multi_gpu']:
             print('Use Multi GPU')
-            # self.net = torch.nn.DataParallel(self.net, device_ids=config['gpu_ids'])
-        self.net.cuda(device=0)
+            self.net = torch.nn.DataParallel(self.net, device_ids=config['gpu_ids'])
         self.MSE = torch.nn.MSELoss()
         self.optim = torch.optim.Adam(self.net.parameters(),
                                       lr=config['lr'])
@@ -58,8 +57,7 @@ class Solver():
             self.vgg_face = vgg_face_dag()
         num_ftrs = self.vgg_face.fc8.in_features
         self.vgg_face.fc8 = nn.Linear(num_ftrs, 1024)
-        # self.vgg_face = torch.nn.DataParallel(self.vgg_face, device_ids=[1, 2])
-        self.vgg_face.cuda(device=1)
+        self.vgg_face = torch.nn.DataParallel(self.vgg_face, device_ids=config['gpu_ids'])
         self.optim_vgg = torch.optim.Adam(self.vgg_face.parameters(),
                                           lr=config['lr'])
         self.scheduler_vgg = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optim_vgg,
@@ -83,11 +81,11 @@ class Solver():
             face_embedding_list = []
             for step, (video, audio, _) in enumerate(self.train_loader):
                 if (step + 1) % self.config['num_of_face'] != 0:
-                    video_list.append(video.cuda(1))
-                    audio_list.append(audio.cuda(1))
+                    video_list.append(video.to(self.device))
+                    audio_list.append(audio.to(self.device))
                 else:
-                    video_list.append(video.cuda(1))
-                    audio_list.append(audio.cuda(1))
+                    video_list.append(video.to(self.device))
+                    audio_list.append(audio.to(self.device))
                     audio_mix = 0
                     for idx in range(self.config['num_of_face']):
                         one_face_list = []

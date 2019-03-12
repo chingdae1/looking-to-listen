@@ -82,7 +82,7 @@ class Dataset(data.Dataset):
             # HWC2CHW
             frame = frame.permute(2, 0, 1)
             frames[idx, :, :, :] = frame
-        frames /= 255
+        # frames /= 255
         return frames
 
     def load_audio(self, audio_path):

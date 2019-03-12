@@ -106,7 +106,6 @@ class Net(nn.Module):
     def forward(self, face_embedding_list, spectrogram):
         video_stream_output_list = []
         for face_embedding in face_embedding_list:
-            face_embedding.cuda(device=0)
             video_stream_output = self.video_stream(face_embedding)
             video_stream_output_list.append(video_stream_output)
         audio_stream_output = self.audio_stream(spectrogram)
