@@ -40,7 +40,8 @@ class Solver():
             self.net.load_state_dict(state_dict)
         if config['multi_gpu']:
             print('Use Multi GPU')
-            self.net = torch.nn.DataParallel(self.net, device_ids=config['gpu_ids'])
+            # self.net = torch.nn.DataParallel(self.net, device_ids=config['gpu_ids'])
+            self.net = torch.nn.DataParallel(self.net).cuda(device=0)
         self.MSE = torch.nn.MSELoss()
         self.optim = torch.optim.Adam(self.net.parameters(),
                                       lr=config['lr'])
@@ -57,7 +58,8 @@ class Solver():
             self.vgg_face = vgg_face_dag()
         num_ftrs = self.vgg_face.fc8.in_features
         self.vgg_face.fc8 = nn.Linear(num_ftrs, 1024)
-        self.vgg_face = torch.nn.DataParallel(self.vgg_face, device_ids=[2])
+        # self.vgg_face = torch.nn.DataParallel(self.vgg_face, device_ids=config['gpu_ids'])
+        self.vgg_face = torch.nn.DataParallel(self.vgg_face).cuda(device=1)
         self.optim_vgg = torch.optim.Adam(self.vgg_face.parameters(),
                                           lr=config['lr'])
         self.scheduler_vgg = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optim_vgg,
