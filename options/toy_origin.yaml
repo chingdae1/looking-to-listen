@@ -17,14 +17,14 @@ val_every: 1
 sample_for: 20
 val_sample_dir: ./val_sample
 save_dir: ./saved
-save_every: 1
+save_every: 2000
 
-load_model: True
+load_model: False
 load_path: ./saved/toy_100/model_0.pt
-load_vgg: True
+load_vgg: False
 load_vgg_path: ./saved/toy_100/model_vgg_0.pt
 
-multi_gpu: True
+multi_gpu: False
 gpu_ids:
     - 0
     - 1
