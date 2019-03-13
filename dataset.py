@@ -81,6 +81,9 @@ class Dataset(data.Dataset):
             frame = torch.from_numpy(frame)
             # HWC2CHW
             frame = frame.permute(2, 0, 1)
+            frame[0, :, :] -= 129.186279296875
+            frame[1, :, :] -= 104.76238250732422
+            frame[2, :, :] -= 93.59396362304688
             frames[idx, :, :, :] = frame
         # frames /= 255
         return frames
@@ -123,7 +126,10 @@ class Dataset(data.Dataset):
 
         for frame in vid_tensor:
             frame = frame.permute(1, 2, 0).cpu().numpy()
-            frame *= 255
+            # frame *= 255
+            frame[:, :, 0] += 129.186279296875
+            frame[:, :, 1] += 104.76238250732422
+            frame[:, :, 2] += 93.59396362304688
             frame = frame.astype(np.uint8)
             vid_writer.write(frame)
 
